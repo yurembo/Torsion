@@ -6,10 +6,10 @@
 #define TORSION_XMLFILE_H
 #pragma once
 
-#include "MarkupSTL.h"
+#include "Markup/Markup.h"
 
 
-class XmlFile : public CMarkupSTL
+class XmlFile : public CMarkup
 {
 public:
    XmlFile();

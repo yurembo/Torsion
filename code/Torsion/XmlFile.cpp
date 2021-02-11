@@ -16,12 +16,12 @@ wxChar XmlFile::s_Temp[MAX_PATH];
 
 
 XmlFile::XmlFile() :
-   CMarkupSTL()
+   CMarkup()
 {
 }
 
 XmlFile::XmlFile( const wxChar* buffer ) :
-   CMarkupSTL( buffer )
+   CMarkup( buffer )
 {
 }
 

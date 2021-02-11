@@ -6,7 +6,7 @@
 #include "AutoCompExports.h"
 
 #include "AutoCompUtil.h"
-#include "MarkupSTL.h"
+#include "Markup/Markup.h"
 
 #include <wx/regex.h>
 #include <wx/wfstream.h>
@@ -505,7 +505,7 @@ bool AutoCompExports::SaveXml( const wxString& path ) const
 	if ( !File.Open( path, wxFile::write ) )
 		return false;
 
-   CMarkupSTL xml;
+   CMarkup xml;
 
    xml.AddElem( "exports" );
    xml.IntoElem();
@@ -522,7 +522,7 @@ bool AutoCompExports::SaveXml( const wxString& path ) const
    return noerror;
 }
 
-void AutoCompExports::_SaveClasses( CMarkupSTL& xml, const AutoCompClassArray& classes )
+void AutoCompExports::_SaveClasses( CMarkup& xml, const AutoCompClassArray& classes )
 {
    for ( int i=0; i < classes.GetCount(); i++ ) {
 
@@ -547,7 +547,7 @@ void AutoCompExports::_SaveClasses( CMarkupSTL& xml, const AutoCompClassArray& c
    }
 }
 
-void AutoCompExports::_SaveFunctions( CMarkupSTL& xml, const wxString& elem, const AutoCompFunctionArray& functions )
+void AutoCompExports::_SaveFunctions( CMarkup& xml, const wxString& elem, const AutoCompFunctionArray& functions )
 {
    for ( int i=0; i < functions.GetCount(); i++ ) {
 
@@ -573,7 +573,7 @@ void AutoCompExports::_SaveFunctions( CMarkupSTL& xml, const wxString& elem, con
 }
 
 
-void AutoCompExports::_SaveVars( CMarkupSTL& xml, const wxString& elem, const AutoCompVarArray& vars )
+void AutoCompExports::_SaveVars( CMarkup& xml, const wxString& elem, const AutoCompVarArray& vars )
 {
    for ( int i=0; i < vars.GetCount(); i++ ) {
 
@@ -604,7 +604,7 @@ bool AutoCompExports::LoadXml( const wxString& path )
    char* Buffer = new char[ Length+1 ];
 	File.Read( Buffer, Length );
 	Buffer[ Length ] = 0;
-   CMarkupSTL xml;
+   CMarkup xml;
    bool error = xml.SetDoc( Buffer );
 	delete [] Buffer;   
 
@@ -628,7 +628,7 @@ bool AutoCompExports::LoadXml( const wxString& path )
    return true;
 }
 
-void AutoCompExports::_LoadClasses( CMarkupSTL& xml, AutoCompClassArray& objects )
+void AutoCompExports::_LoadClasses( CMarkup& xml, AutoCompClassArray& objects )
 {
    // Now grab the classes.
    while ( xml.FindElem( "class" ) ) 
@@ -690,7 +690,7 @@ void AutoCompExports::_LoadClasses( CMarkupSTL& xml, AutoCompClassArray& objects
    } // while ( xml.FindElem( elem.c_str() ) )
 }
 
-void AutoCompExports::_LoadFunctions( CMarkupSTL& xml, const wxString& elem, AutoCompFunctionArray& functions )
+void AutoCompExports::_LoadFunctions( CMarkup& xml, const wxString& elem, AutoCompFunctionArray& functions )
 {
    while ( xml.FindElem( elem.c_str() ) )
    {
@@ -737,7 +737,7 @@ void AutoCompExports::_LoadFunctions( CMarkupSTL& xml, const wxString& elem, Aut
    } // while ( xml.FindElem( elem.c_str() ) )
 }
 
-void AutoCompExports::_LoadVars( CMarkupSTL& xml, const wxString& elem, AutoCompVarArray& vars )
+void AutoCompExports::_LoadVars( CMarkup& xml, const wxString& elem, AutoCompVarArray& vars )
 {
    while ( xml.FindElem( elem.c_str() ) ) {
 

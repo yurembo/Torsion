@@ -32,7 +32,7 @@
 // in any case, the user may override by defining wxUSE_DBGHELP himself
 #ifndef wxUSE_DBGHELP
     #ifdef DBHLPAPI
-        #define wxUSE_DBGHELP 1
+        #define wxUSE_DBGHELP 0//1 - my_cod
     #else
         #define wxUSE_DBGHELP 0
     #endif

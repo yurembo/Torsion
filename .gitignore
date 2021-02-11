@@ -3,3 +3,13 @@
 *.lo
 *.o
 *.obj
+*.pdb
+*.exe
+*.lib
+*.log
+*.tlog
+*.pch
+*.ipch
+*.sdf
+*.exe
+*.lib

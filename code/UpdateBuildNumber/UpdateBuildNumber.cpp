@@ -2,6 +2,7 @@
 //
 
 #include "stdafx.h"
+#include <stdlib.h>
 #include <wx/textfile.h>
 #include <wx/datetime.h>
 
@@ -27,28 +28,28 @@ int UpdateHeader( const wxString& path, wxString* buildVer )
       line = file.GetLine( i );
       line.Trim( false );
 
-      if ( line.StartsWith( "#define tsBUILDVER_START", &rest ) )
+      if ( line.StartsWith( L"#define tsBUILDVER_START", &rest ) )
       {
          rest.Trim( false );
          double value;
          rest.ToDouble( &value );
          start = (time_t)value;
       }
-      else if ( line.StartsWith( "#define tsBUILDVER_MAJOR", &rest ) )
+      else if ( line.StartsWith( L"#define tsBUILDVER_MAJOR", &rest ) )
       {
          rest.Trim( false );
          long value;
          rest.ToLong( &value );
          major = value;
       }
-      else if ( line.StartsWith( "#define tsBUILDVER_MINOR", &rest ) )
+      else if ( line.StartsWith( L"#define tsBUILDVER_MINOR", &rest ) )
       {
          rest.Trim( false );
          long value;
          rest.ToLong( &value );
          minor = value;
       }
-      else if ( line.StartsWith( "#define tsBUILDVER_BUILD", &rest ) )
+      else if ( line.StartsWith( L"#define tsBUILDVER_BUILD", &rest ) )
       {
          rest.Trim( false );
          long value;
@@ -68,7 +69,7 @@ int UpdateHeader( const wxString& path, wxString* buildVer )
 
    // Return the build string.
    if ( buildVer )
-      *buildVer << major << "." << minor << "." << newBuild;
+      *buildVer << major << L"." << minor << L"." << newBuild;
 
    // If we don't need to update then exit.
    if ( build == newBuild )
@@ -81,16 +82,16 @@ int UpdateHeader( const wxString& path, wxString* buildVer )
       line = file.GetLine( i );
       line.Trim( false );
 
-      if ( line.StartsWith( "#define tsBUILDVER_BUILD" ) )
+      if ( line.StartsWith( L"#define tsBUILDVER_BUILD" ) )
       {
          line.Empty();
-         line << "#define tsBUILDVER_BUILD\t" << newBuild;
+         line << L"#define tsBUILDVER_BUILD\t" << newBuild;
          file[i] = line;
       }
-      else if ( line.StartsWith( "#define tsBUILDVER_RESSTR" ) )
+      else if ( line.StartsWith( L"#define tsBUILDVER_RESSTR" ) )
       {
          line.Empty();
-         line << "#define tsBUILDVER_RESSTR\t\"" << major << "." << minor << ".0." << newBuild << "\"";
+         line << L"#define tsBUILDVER_RESSTR\t\"" << major << L"." << minor << L".0." << newBuild << L"\"";
          file[i] = line;
       }
    }
@@ -115,17 +116,17 @@ int UpdateInstaller( const wxString& path, const wxString& version )
       line = file.GetLine( i );
       line.Trim( false );
 
-      if ( line.StartsWith( "AppName=" ) )
+      if ( line.StartsWith( L"AppName=" ) )
       {
          name = line.Remove( 0, 8 );
          name.Trim( true );
          name.Trim( false );
          name.Append( ' ' );
       }
-      else if ( line.StartsWith( "AppVerName=" ) )
+      else if ( line.StartsWith( L"AppVerName=" ) )
       {
          line.Empty();
-         line << "AppVerName=" << name << version;
+         line << L"AppVerName=" << name << version;
          file[i] = line;
          break;
       }
