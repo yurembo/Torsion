@@ -4,7 +4,7 @@
 
 [Setup]
 AppName=Torsion
-AppVerName=Torsion 1.1.5122
+AppVerName=Torsion 1.1.5140
 AppPublisher= Sickhead Games, LLC
 AppPublisherURL=http://www.sickheadgames.com/
 AppSupportURL=https://github.com/SickheadGames/Torsion/issues

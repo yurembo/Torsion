@@ -99,7 +99,7 @@ bool tsShellOpenAs( const wxString& path )
    //
 
    wxString command;
-   command << "rundll32.exe shell32.dll,OpenAs_RunDLL " << path;
+   command << L"rundll32.exe shell32.dll,OpenAs_RunDLL " << path;
    return wxExecute( command, wxEXEC_ASYNC, NULL ) != 0;
 }
 
@@ -144,11 +144,12 @@ bool tsSendToRecycleBin( const wxArrayString& source, bool noConfirm )
    NullDelimitedBuffer( source, &del );
 
    SHFILEOPSTRUCT fileop; 
+   //LPSHFILEOPSTRUCTA fileop;
    ZeroMemory( &fileop, sizeof(fileop) ); 
    fileop.wFunc    = FO_DELETE; 
-   fileop.pFrom    = (LPCSTR)del.GetData(); 
+   fileop.pFrom    = (PCZZWSTR)del.GetData(); 
    fileop.fFlags   = FOF_SILENT | FOF_ALLOWUNDO | ( noConfirm ? FOF_NOCONFIRMATION : 0 ) | 0x2000 /* FOF_NO_CONNECTED_ELEMENTS */;
-   return SHFileOperationA( &fileop ) == 0 && fileop.fAnyOperationsAborted == false;
+   return SHFileOperation( &fileop ) == 0 && fileop.fAnyOperationsAborted == false;
 }
 
 bool tsMoveFiles( const wxArrayString& source, const wxString& destFolder )
@@ -164,8 +165,8 @@ bool tsMoveFiles( const wxArrayString& source, const wxString& destFolder )
    SHFILEOPSTRUCT fileop; 
    ZeroMemory( &fileop, sizeof(fileop) ); 
    fileop.wFunc    = FO_MOVE; 
-   fileop.pFrom    = (LPCSTR)from.GetData(); ; 
-   fileop.pTo      = (LPCSTR)to.GetData(); ; 
+   fileop.pFrom    = (PCZZWSTR)from.GetData(); ; 
+   fileop.pTo      = (PCZZWSTR)to.GetData(); ; 
    fileop.fFlags   = FOF_SILENT | FOF_ALLOWUNDO | 0x2000 /* FOF_NO_CONNECTED_ELEMENTS */;
 
    return SHFileOperation( &fileop ) == 0;
@@ -184,8 +185,8 @@ bool tsCopyFiles( const wxArrayString& source, const wxString& destFolder )
    SHFILEOPSTRUCT fileop; 
    ZeroMemory( &fileop, sizeof(fileop) ); 
    fileop.wFunc    = FO_COPY; 
-   fileop.pFrom    = (LPCSTR)from.GetData(); ; 
-   fileop.pTo      = (LPCSTR)to.GetData(); ; 
+   fileop.pFrom    = (PCZZWSTR)from.GetData(); ; 
+   fileop.pTo      = (PCZZWSTR)to.GetData(); ; 
    fileop.fFlags   = FOF_SILENT | FOF_ALLOWUNDO | 0x2000 /* FOF_NO_CONNECTED_ELEMENTS */;
 
    return SHFileOperation( &fileop ) == 0;
@@ -236,7 +237,7 @@ BOOL CALLBACK PidHasNonConsoleWindow( HWND hwnd, LPARAM lParam )
 	::GetWindowThreadProcessId( hwnd, &windowPid );
 
    char name[MAX_PATH];
-   GetClassName( hwnd, name, MAX_PATH );
+   GetClassName( hwnd, LPWSTR(name), MAX_PATH );
 	if ( pid == windowPid && IsWindowVisible( hwnd ) ) {
 
       // These are the console class names for NT and 9x.
@@ -258,23 +259,23 @@ bool tsProcessHasNonConsoleWindow( long pid )
 long tsMswGetProcessId( HANDLE handle )
 {
    // First try GetProcessId.       
-   wxDynamicLibrary kernel32( "kernel32.dll" );
+   wxDynamicLibrary kernel32( L"kernel32.dll" );
    if (kernel32.IsLoaded())
    {
       typedef DWORD (WINAPI GETSYM)(HANDLE);
 
-      GETSYM* getSymbol = (GETSYM*)kernel32.GetSymbol( "GetProcessId" );
+      GETSYM* getSymbol = (GETSYM*)kernel32.GetSymbol( L"GetProcessId" );
       if ( getSymbol )
          return getSymbol( handle );
    }
 
    // Fall back to NtQueryInformationProcess.
-   wxDynamicLibrary ntdll( "ntdll.dll" );
+   wxDynamicLibrary ntdll( L"ntdll.dll" );
    if (ntdll.IsLoaded())
    {
       typedef NTSTATUS (WINAPI NTQIP)(HANDLE, PROCESSINFOCLASS, PVOID, ULONG, PULONG);
 
-      NTQIP* ntQueryInformationProcess = (NTQIP*)ntdll.GetSymbol( "NtQueryInformationProcess" );
+      NTQIP* ntQueryInformationProcess = (NTQIP*)ntdll.GetSymbol( L"NtQueryInformationProcess" );
       if ( ntQueryInformationProcess )
       {
          PROCESS_BASIC_INFORMATION pbi;

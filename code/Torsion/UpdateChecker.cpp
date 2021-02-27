@@ -34,7 +34,7 @@ bool UpdateChecker::CheckAvailable( wxString* version )
    // for me.  Implementing my own HTTP GET.
 
    wxIPV4address add;
-   add.Hostname( "www.sickheadgames.com" );
+   add.Hostname( L"www.sickheadgames.com" );
    add.Service( 80 );
    wxSocketClient client( wxSOCKET_WAITALL | wxSOCKET_BLOCK );
    client.SetTimeout( 5 );
@@ -46,9 +46,9 @@ bool UpdateChecker::CheckAvailable( wxString* version )
 
    // Post the request.
    wxString get;
-   get << "GET /tdeversion.php HTTP/1.0\r\n";
-   get << "Host: www.sickheadgames.com\r\n";
-   get << "\r\n";
+   get << L"GET /tdeversion.php HTTP/1.0\r\n";
+   get << L"Host: www.sickheadgames.com\r\n";
+   get << L"\r\n";
    client.Write( get.GetData(), get.Length() );
    if ( client.Error() )
       return false;
@@ -71,7 +71,7 @@ bool UpdateChecker::CheckAvailable( wxString* version )
 
    // Look for the line after the double 
    // newline... that's our version.
-   int pos = data.Find( "\r\n\r\n" );
+   int pos = data.Find( L"\r\n\r\n" );
    if ( pos == -1 )
       return false;
 
@@ -85,7 +85,7 @@ bool UpdateChecker::CheckAvailable( wxString* version )
 
    // Extract the major, minor, and build numbers.
    wxRegEx expr;
-   expr.Compile( "[v]([0-9]+)[\\.]([0-9]+)[\\.]([0-9]+)", wxRE_ADVANCED | wxRE_ICASE );
+   expr.Compile( L"[v]([0-9]+)[\\.]([0-9]+)[\\.]([0-9]+)", wxRE_ADVANCED | wxRE_ICASE );
    wxASSERT( expr.IsValid() );
 
    if ( !expr.Matches( newVersion ) || expr.GetMatchCount() != 4 )

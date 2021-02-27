@@ -57,8 +57,8 @@ void StackDump::Dump( wxString* address, wxString* data )
    m_Data->Alloc( 1024 );
 
    // Add some basic info first!
-   (*m_Data) << tsGetFullBuildString() << "\r\n";
-   (*m_Data) << wxGetOsDescription() << "\r\n\r\n";
+   (*m_Data) << tsGetFullBuildString() << L"\r\n";
+   (*m_Data) << wxGetOsDescription() << L"\r\n\r\n";
 
    // Do the walk.
    WalkFromException();
@@ -73,11 +73,11 @@ void StackDump::OnStackFrame( const wxStackFrame& frame )
    DWORD funcAddress = (DWORD)frame.GetAddress() - frame.GetOffset();
 
    wxString address;
-   address.Printf( "0x%.8x:%.6d", funcAddress, frame.GetOffset() );
+   address.Printf( L"0x%.8x:%.6d", funcAddress, frame.GetOffset() );
    if ( m_Address->IsEmpty() )
       *m_Address = address;
 
-   (*m_Data) << address << '\t' << frame.GetModule() << "\t" << frame.GetName() << "\r\n";
+   (*m_Data) << address << '\t' << frame.GetModule() << L"\t" << frame.GetName() << L"\r\n";
 }
 
 

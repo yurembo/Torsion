@@ -185,8 +185,8 @@ HeaderCtrl::HeaderCtrl( WatchCtrl* parent )
 		m_Spacer( wxSystemSettings::GetMetric( wxSYS_FRAMESIZE_X ) )
 {
 	m_Titles.resize( 2 );
-	m_Titles[0] = "Name";
-	m_Titles[1] = "Value";
+	m_Titles[0] = L"Name";
+	m_Titles[1] = L"Value";
 	//m_Titles[2] = "Type";
 
 	m_Widths.resize( 2 );
@@ -255,7 +255,7 @@ void HeaderCtrl::OnPaint( wxPaintEvent& Event )
 	dc.SetBackgroundMode( wxTRANSPARENT ); 
 	dc.SetTextForeground( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNTEXT ) ); 
 
-	wxFont Font( 8, wxDEFAULT, wxNORMAL, wxNORMAL, false, "Arial" );
+	wxFont Font( 8, wxDEFAULT, wxNORMAL, wxNORMAL, false, L"Arial" );
 	dc.SetFont( Font );
 
 	for ( int i=0; i < m_Widths.size(); i++ ) {
@@ -384,7 +384,7 @@ void HeaderCtrl::DrawText( wxDC& dc, const wxRect& Clipped, const wxString& text
       // Generate the new string to test.
       clippedText = text.Left( curr );
       clippedText.Trim( true );
-      clippedText.Append( "..." );
+      clippedText.Append( L"..." );
    }
 
 	dc.DestroyClippingRegion();
@@ -437,7 +437,7 @@ ListCtrl::ListCtrl( WatchCtrl* parent, HeaderCtrl* header )
 		m_EditCtrl( NULL ),
       m_Font( NULL )		
 {
-   m_Font = wxTheFontList->FindOrCreateFont( 8, wxDEFAULT, wxNORMAL, wxNORMAL, false, "Arial" );
+   m_Font = wxTheFontList->FindOrCreateFont( 8, wxDEFAULT, wxNORMAL, wxNORMAL, false, L"Arial" );
    wxClientDC dc( this );
 	dc.SetFont( *m_Font );
 	m_LineHeight = dc.GetCharHeight() + 2;
@@ -704,7 +704,7 @@ void ListCtrl::_OnVarEdit( int Row, int Col, const wxString& Value )
 	if ( !Var->GetName().IsEmpty() ) {
 
 		wxASSERT( !Var->GetParent() );
-		m_WatchCtrl->_AddVar( new WatchVar( NULL, "", 0, "", "" ), true );
+		m_WatchCtrl->_AddVar( new WatchVar( NULL, L"", 0, L"", L"" ), true );
 	}
 
 	// Clear any extra empties from the bottom of the list.
@@ -1020,7 +1020,7 @@ WatchCtrl::WatchCtrl( wxWindow* parent, bool EditableRow )
 
 	if ( m_EditableRow ) {
 
-		_AddVar( new WatchVar( NULL, "", 0, "", "" ), true );
+		_AddVar( new WatchVar( NULL, L"", 0, L"", L"" ), true );
 		m_ListCtrl->OnChanged();
 
 		SetDropTarget( new TextDropTarget( this ) );
@@ -1047,7 +1047,7 @@ void WatchCtrl::AddVar( const wxString& Name )
 		return;
 	}
 
-	WatchVar* Var = new WatchVar( NULL, "", 0, Name, "" );
+	WatchVar* Var = new WatchVar( NULL, L"", 0, Name, L"" );
 	_AddVar( Var );
 
 	wxASSERT( tsGetDebugger() );
@@ -1074,7 +1074,7 @@ void WatchCtrl::ClearAll()
 
 	// Add an editble row back in.
 	if ( m_EditableRow ) {
-		_AddVar( new WatchVar( NULL, "", 0, "", "" ), true );
+		_AddVar( new WatchVar( NULL, L"", 0, L"", L"" ), true );
 	}
 
 	m_ListCtrl->OnChanged();
@@ -1216,7 +1216,7 @@ void WatchCtrl::_AddVar( WatchVar* Var, bool EditableVar  )
 	wxASSERT( Var );
 
 	// Skip metatables if requested.
-	if ( Var->GetName() == "(metatable)" && !m_ShowMetatables ) {
+	if ( Var->GetName() == L"(metatable)" && !m_ShowMetatables ) {
 		 return;
 	}
 
@@ -1245,7 +1245,7 @@ int WatchCtrl::_InsertVars( int Row, const WatchVarArray& Vars )
 		wxASSERT( Vars[i] );
 
 		// Skip metatables if requested.
-		if ( Vars[i]->GetName() == "(metatable)" && !m_ShowMetatables ) {
+		if ( Vars[i]->GetName() == L"(metatable)" && !m_ShowMetatables ) {
 
 			--Row;
 			continue;

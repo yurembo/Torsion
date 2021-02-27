@@ -12,6 +12,8 @@
 #include <shobjidl.h>
 #include <winternl.h>
 
+#include "helper.h"
+
 #ifdef _DEBUG 
    #define new DEBUG_NEW 
 #endif 
@@ -66,8 +68,8 @@ bool ShellMenu::PopulateMenu()
          dir = m_File.GetPath();
       }
 
-      MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, name.c_str(), -1, itemName, MAX_PATH);
-      MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, dir.c_str(), -1, itemDir, MAX_PATH);
+	  MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, LPCCH(name.c_str()), -1, itemName, MAX_PATH);
+      MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, LPCCH(dir.c_str()), -1, itemDir, MAX_PATH);
    }
 
    // Get the pidl of the parent and of the item.
@@ -171,8 +173,9 @@ WXLRESULT ShellMenu::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam
          uItem = (UINT) LOWORD(wParam);   
          if( uItem >= tsID_SHELL_MIN && uItem <= tsID_SHELL_MAX ) 
          {
+			 char* ch = _strdup(narrow(szBuf).c_str());
             m_ContextHandler->GetCommandString(uItem-tsID_SHELL_MIN, GCS_HELPTEXT,
-               NULL, szBuf, sizeof(szBuf)/sizeof(szBuf[0]) );
+               NULL, ch, sizeof(ch)/sizeof(ch[0]) );
 
             // set the status bar text
             //((CFrameWnd*)(AfxGetApp()->m_pMainWnd))->SetMessageText(szBuf);
@@ -194,8 +197,8 @@ WXLRESULT ShellMenu::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam
          ZeroMemory(&ici, sizeof(ici));
          ici.hwnd = NULL;
          ici.cbSize = sizeof(CMINVOKECOMMANDINFO);
-         ici.lpVerb = MAKEINTRESOURCE(uItem-tsID_SHELL_MIN);
-         ici.lpDirectory = dir.c_str();
+         ici.lpVerb = LPCSTR(MAKEINTRESOURCE(uItem-tsID_SHELL_MIN));
+         ici.lpDirectory = LPCSTR(dir.c_str());
          ici.nShow = SW_SHOWNORMAL;
          m_ContextHandler->InvokeCommand((CMINVOKECOMMANDINFO*)&ici);
 

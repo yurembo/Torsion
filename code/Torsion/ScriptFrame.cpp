@@ -304,7 +304,7 @@ void ScriptFrame::OnContextMenu( wxContextMenuEvent& event )
    wxASSERT( doc );
    
    wxString save;
-   save << "&Save " << doc->GetTitle();;
+   save << L"&Save " << doc->GetTitle();;
 
    tsMenu* menu = new tsMenu;
    menu->AppendIconItem( wxID_SAVE, save, ts_save16 );
@@ -362,12 +362,12 @@ void ScriptFrame::SetTabState( ScriptView* view, bool modified, bool readonly )
    tabTitle = title;
 
    if ( modified ) {
-      tabTitle << "*";
-      title << "*";
+      tabTitle << L"*";
+      title << L"*";
    }
 
    if ( readonly ) {
-      tabTitle << " (ro)";
+      tabTitle << L" (ro)";
    }
 
    wxASSERT( m_ScriptNotebook );

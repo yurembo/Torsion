@@ -11,20 +11,22 @@
 
 #include "XmlFile.h"
 
+#include "helper.h"
+
 #ifdef _DEBUG 
    #define new DEBUG_NEW 
 #endif 
 
 const wxChar* AppPrefs::s_ReservedWords = 
-   "break case continue datablock package default else false function if for new or package return " \
-   "switch switch$ true %this while singleton local";
+   L"break case continue datablock package default else false function if for new or package return " \
+   L"switch switch$ true %this while singleton local";
 
 IMPLEMENT_CLASS(tsPrefsUpdateHint, wxObject)
 
 
 AppPrefs::AppPrefs() :
 	m_bDirty( true ),
-	m_DefaultFont( 10, wxDEFAULT, wxNORMAL, wxNORMAL, false, "Courier New" ),
+	m_DefaultFont( 10, wxDEFAULT, wxNORMAL, wxNORMAL, false, L"Courier New" ),
    m_TabsAndSpaces( false ),
    m_LineBreaks( false ),
    m_LineNumbers( true ),
@@ -52,7 +54,7 @@ bool AppPrefs::Load( const wxString& Path )
 	if ( !File.Open( Path, wxFile::read ) ) {
 
       // This loads defaults.
-      LoadFromString( "" );
+      LoadFromString( L"" );
 		return false;
 	}
 
@@ -60,7 +62,7 @@ bool AppPrefs::Load( const wxString& Path )
     char* Buffer = new char[ Length+1 ];
 	File.Read( Buffer, Length );
 	Buffer[ Length ] = 0;
-   LoadFromString( Buffer );
+	LoadFromString( widen(Buffer).c_str() );
 	delete [] Buffer;
 
    return true;
@@ -70,52 +72,52 @@ void AppPrefs::LoadFromString( const wxChar* Buffer )
 {
    XmlFile Xml( Buffer );
 
-	Xml.FindElem( "TorsionPrefs" );
+	Xml.FindElem( L"TorsionPrefs" );
 	Xml.IntoElem();
 
-   wxString fontInfo = Xml.GetStringElem( "DefaultFont", m_DefaultFont.GetNativeFontInfoDesc() );
+   wxString fontInfo = Xml.GetStringElem( L"DefaultFont", m_DefaultFont.GetNativeFontInfoDesc() );
    m_DefaultFont.SetNativeFontInfo( fontInfo );
 
-   m_Reserved = Xml.GetStringElem( "ReservedWords", s_ReservedWords );
+   m_Reserved = Xml.GetStringElem( L"ReservedWords", s_ReservedWords );
 	ReformatWords( m_Reserved );
-   m_ReservedColor = Xml.GetColorAttrib( "ReservedWords", "color", wxColour( 0, 0, 255 ) );
+   m_ReservedColor = Xml.GetColorAttrib( L"ReservedWords", L"color", wxColour( 0, 0, 255 ) );
 
-   m_ExportsColor = Xml.GetColorElem( "ExportsColor", wxColour( 0, 0, 128 ) );
+   m_ExportsColor = Xml.GetColorElem( L"ExportsColor", wxColour( 0, 0, 128 ) );
 
-   m_BgColor = Xml.GetColorElem( "BgColor", wxColour( 255,255,255 ) );
+   m_BgColor = Xml.GetColorElem( L"BgColor", wxColour( 255,255,255 ) );
 
-   m_DefaultColor = Xml.GetColorElem( "DefaultColor", wxColour( 0,0,0 ) );
-   m_CommentColor = Xml.GetColorElem( "CommentColor", wxColour( 0,128,0 ) );
-   m_NumberColor = Xml.GetColorElem( "NumberColor", wxColour( 0,0,0 ) );
-   m_StringColor = Xml.GetColorElem( "StringColor", wxColour( 128,0,128 ) );
-   m_OperatorsColor = Xml.GetColorElem( "OperatorsColor", wxColour( 128,128,0 ) );
-   m_LocalsColor = Xml.GetColorElem( "LocalsColor", wxColour( 0,128,128 ) );
-   m_GlobalsColor = Xml.GetColorElem( "GlobalsColor", wxColour( 196,92,0 ) );
+   m_DefaultColor = Xml.GetColorElem( L"DefaultColor", wxColour( 0,0,0 ) );
+   m_CommentColor = Xml.GetColorElem( L"CommentColor", wxColour( 0,128,0 ) );
+   m_NumberColor = Xml.GetColorElem( L"NumberColor", wxColour( 0,0,0 ) );
+   m_StringColor = Xml.GetColorElem( L"StringColor", wxColour( 128,0,128 ) );
+   m_OperatorsColor = Xml.GetColorElem( L"OperatorsColor", wxColour( 128,128,0 ) );
+   m_LocalsColor = Xml.GetColorElem( L"LocalsColor", wxColour( 0,128,128 ) );
+   m_GlobalsColor = Xml.GetColorElem( L"GlobalsColor", wxColour( 196,92,0 ) );
 
-   m_SelColor = Xml.GetColorElem( "SelColor", wxColour( 255,255,255 ) );
-   m_SelBgColor = Xml.GetColorElem( "SelBgColor", wxColour( 49,106,197 ) );
+   m_SelColor = Xml.GetColorElem( L"SelColor", wxColour( 255,255,255 ) );
+   m_SelBgColor = Xml.GetColorElem( L"SelBgColor", wxColour( 49,106,197 ) );
 
-   m_BraceMatchColor = Xml.GetColorElem( "BraceMatchColor", wxColour( 0,0,0 ) );
-   m_BraceMatchBgColor = Xml.GetColorElem( "BraceMatchBgColor", wxColour( 240,240,240 ) );
-   m_BraceMatchErrColor = Xml.GetColorElem( "BraceMatchErrColor", wxColour( 197,0,0 ) );
+   m_BraceMatchColor = Xml.GetColorElem( L"BraceMatchColor", wxColour( 0,0,0 ) );
+   m_BraceMatchBgColor = Xml.GetColorElem( L"BraceMatchBgColor", wxColour( 240,240,240 ) );
+   m_BraceMatchErrColor = Xml.GetColorElem( L"BraceMatchErrColor", wxColour( 197,0,0 ) );
 
-   m_CalltipColor = Xml.GetColorElem( "CalltipColor", wxColour( 0,0,0 ) );
-   m_CalltipBgColor = Xml.GetColorElem( "CalltipBgColor", wxColour( 255,255,225 ) );
-   m_CalltipHiColor = Xml.GetColorElem( "CalltipHiColor", wxColour( 0,128,128 ) );
+   m_CalltipColor = Xml.GetColorElem( L"CalltipColor", wxColour( 0,0,0 ) );
+   m_CalltipBgColor = Xml.GetColorElem( L"CalltipBgColor", wxColour( 255,255,225 ) );
+   m_CalltipHiColor = Xml.GetColorElem( L"CalltipHiColor", wxColour( 0,128,128 ) );
 
-   m_MarginColor = Xml.GetColorElem( "MarginColor", wxColour( 240,240,240 ) );
-   m_MarginTextColor = Xml.GetColorElem( "MarginTextColor", wxColour( 0,0,0 ) );
+   m_MarginColor = Xml.GetColorElem( L"MarginColor", wxColour( 240,240,240 ) );
+   m_MarginTextColor = Xml.GetColorElem( L"MarginTextColor", wxColour( 0,0,0 ) );
 
-   m_CodeCompletion = Xml.GetBoolElem( "CodeCompletion", true );
+   m_CodeCompletion = Xml.GetBoolElem( L"CodeCompletion", true );
    
-   m_EnhancedCompletion = Xml.GetBoolElem( "EnhancedCompletion", true );
+   m_EnhancedCompletion = Xml.GetBoolElem( L"EnhancedCompletion", true );
 
-   m_CodeFolding = Xml.GetBoolElem( "CodeFolding", true );
-   m_CodeFoldingColor = Xml.GetColorElem( "CodeFoldingColor", wxColour( 128, 128, 128 ) );
+   m_CodeFolding = Xml.GetBoolElem( L"CodeFolding", true );
+   m_CodeFoldingColor = Xml.GetColorElem( L"CodeFoldingColor", wxColour( 128, 128, 128 ) );
 
    wxRect desktop( wxScreenDC().GetSize() );
 
-   Xml.FindElem( "Position" );
+   Xml.FindElem( L"Position" );
 	m_Position = StringToRect( Xml.GetData().c_str() );
    {
       if ( !desktop.Inside( m_Position.GetTopLeft() ) )
@@ -126,75 +128,75 @@ void AppPrefs::LoadFromString( const wxChar* Buffer )
          m_Position.SetHeight( desktop.GetHeight() );
    }
 	Xml.ResetMainPos();
-   m_Maximized = Xml.GetBoolElem( "Maximized", false );
+   m_Maximized = Xml.GetBoolElem( L"Maximized", false );
 
-   m_ProjectSashWidth = Xml.GetIntElem( "ProjectSashWidth", -1 );
-   m_BottomSashHeight = Xml.GetIntElem( "BottomSashHeight", -1 );
+   m_ProjectSashWidth = Xml.GetIntElem( L"ProjectSashWidth", -1 );
+   m_BottomSashHeight = Xml.GetIntElem( L"BottomSashHeight", -1 );
 
    m_FileHistory.Empty();
-   Xml.GetArrayStringElems( m_FileHistory, "FileHistory", "File" );
+   Xml.GetArrayStringElems( m_FileHistory, L"FileHistory", L"File" );
 
    m_ProjectHistory.Empty();
-   Xml.GetArrayStringElems( m_ProjectHistory, "ProjectHistory", "Project" );
+   Xml.GetArrayStringElems( m_ProjectHistory, L"ProjectHistory", L"Project" );
 
    m_FindStrings.Empty();
-   Xml.GetArrayStringElems( m_FindStrings, "FindHistory", "String" );
+   Xml.GetArrayStringElems( m_FindStrings, L"FindHistory", L"String" );
 
    m_FindTypes.Empty();
-   if ( Xml.GetArrayStringElems( m_FindTypes, "FindTypes", "Type" ) < 1 )
-      m_FindTypes.Add( "*.cs;*.gui;*.mis;*.t2d" );
+   if ( Xml.GetArrayStringElems( m_FindTypes, L"FindTypes", L"Type" ) < 1 )
+      m_FindTypes.Add( L"*.cs;*.gui;*.mis;*.t2d" );
 
    m_FindPaths.Empty();
-   Xml.GetArrayStringElems( m_FindPaths, "FindPaths", "Path" );
+   Xml.GetArrayStringElems( m_FindPaths, L"FindPaths", L"Path" );
    FixupFindPaths( m_FindPaths );
 
-   m_FindMatchCase = Xml.GetBoolElem( "FindMatchCase", false );
-   m_FindMatchWord = Xml.GetBoolElem( "FindMatchWord", false );
-   m_FindSearchUp = Xml.GetBoolElem( "FindSearchUp", false );
+   m_FindMatchCase = Xml.GetBoolElem( L"FindMatchCase", false );
+   m_FindMatchWord = Xml.GetBoolElem( L"FindMatchWord", false );
+   m_FindSearchUp = Xml.GetBoolElem( L"FindSearchUp", false );
    
-   m_FindPos = Xml.GetPointElem( "FindPos", wxDefaultPosition );
+   m_FindPos = Xml.GetPointElem( L"FindPos", wxDefaultPosition );
    if ( !desktop.Inside( m_FindPos ) )
       m_FindPos = wxDefaultPosition;
 
    m_FindSymbols.Empty();
-   Xml.GetArrayStringElems( m_FindSymbols, "FindSymbols", "String" );
+   Xml.GetArrayStringElems( m_FindSymbols, L"FindSymbols", L"String" );
 
-   m_LoadLastProject = Xml.GetBoolElem( "LoadLastProject", true );
-   m_LastProject = Xml.GetStringElem( "LastProject", wxEmptyString );
+   m_LoadLastProject = Xml.GetBoolElem( L"LoadLastProject", true );
+   m_LastProject = Xml.GetStringElem( L"LastProject", wxEmptyString );
 
    m_ScriptExts.Empty();
-   wxString exts = Xml.GetStringElem( "ScriptExtensions", "cs,gui,mis,t2d" );
+   wxString exts = Xml.GetStringElem( L"ScriptExtensions", L"cs,gui,mis,t2d" );
    SetScriptExtsString( exts );
 
    m_DSOExts.Empty();
-   exts = Xml.GetStringElem( "DSOExts", "dso,edso" );
+   exts = Xml.GetStringElem( L"DSOExts", L"dso,edso" );
    SetDSOExtsString( exts );
 
    m_ExcludedFiles.Empty();
-   if ( Xml.GetArrayStringElems( m_ExcludedFiles, "ExcludedFileNames", "Name" ) == -1 ) 
+   if ( Xml.GetArrayStringElems( m_ExcludedFiles, L"ExcludedFileNames", L"Name" ) == -1 ) 
    {
-      m_ExcludedFiles.Add( ".dll" );
-      m_ExcludedFiles.Add( ".exe" );
-      m_ExcludedFiles.Add( ".lnk" );
-      m_ExcludedFiles.Add( ".torsion" );
-      m_ExcludedFiles.Add( ".bak" );
-      m_ExcludedFiles.Add( ".opt" );  // TODO: Change to options once we fix that
-      m_ExcludedFiles.Add( ".exports" );
-      m_ExcludedFiles.Add( ".tmp" );
-      m_ExcludedFiles.Add( ".ilk" );
-      m_ExcludedFiles.Add( ".pdb" );
+      m_ExcludedFiles.Add( L".dll" );
+      m_ExcludedFiles.Add( L".exe" );
+      m_ExcludedFiles.Add( L".lnk" );
+      m_ExcludedFiles.Add( L".torsion" );
+      m_ExcludedFiles.Add( L".bak" );
+      m_ExcludedFiles.Add( L".opt" );  // TODO: Change to options once we fix that
+      m_ExcludedFiles.Add( L".exports" );
+      m_ExcludedFiles.Add( L".tmp" );
+      m_ExcludedFiles.Add( L".ilk" );
+      m_ExcludedFiles.Add( L".pdb" );
    }
 
    m_ExcludedFolders.Empty();
-   if ( Xml.GetArrayStringElems( m_ExcludedFolders, "ExcludedFolderNames", "Name" ) == -1 ) {
+   if ( Xml.GetArrayStringElems( m_ExcludedFolders, L"ExcludedFolderNames", L"Name" ) == -1 ) {
 
-      m_ExcludedFolders.Add( "_svn" );
-      m_ExcludedFolders.Add( ".svn" );
-      m_ExcludedFolders.Add( "cvs" );
+      m_ExcludedFolders.Add( L"_svn" );
+      m_ExcludedFolders.Add( L".svn" );
+      m_ExcludedFolders.Add( L"cvs" );
    }
 
    m_TextExts.Empty();
-   if ( Xml.GetArrayStringElems( m_TextExts, "TextExts", "Ext" ) == -1 ) {
+   if ( Xml.GetArrayStringElems( m_TextExts, L"TextExts", L"Ext" ) == -1 ) {
 
       /*
       TODO: Support opening text files!
@@ -210,37 +212,37 @@ void AppPrefs::LoadFromString( const wxChar* Buffer )
       */
    }
 
-   m_UseTabs = Xml.GetBoolElem( "UseTabs", false );
-   m_TabWidth = Xml.GetIntElem( "TabWidth", 3 );
+   m_UseTabs = Xml.GetBoolElem( L"UseTabs", false );
+   m_TabWidth = Xml.GetIntElem( L"TabWidth", 3 );
 
-   m_LineWrap = Xml.GetBoolElem( "LineWrap", false );
+   m_LineWrap = Xml.GetBoolElem( L"LineWrap", false );
    
-   m_UseEdgeMarker = Xml.GetBoolElem( "EdgeMarker", true );
-   m_EdgeColumn = Xml.GetIntElem( "EdgeMarkerColumn", 80 );
-   m_EdgeMarkerColor = Xml.GetColorElem( "EdgeMarkerColor", wxColour( 240,240,240 ) );
+   m_UseEdgeMarker = Xml.GetBoolElem( L"EdgeMarker", true );
+   m_EdgeColumn = Xml.GetIntElem( L"EdgeMarkerColumn", 80 );
+   m_EdgeMarkerColor = Xml.GetColorElem( L"EdgeMarkerColor", wxColour( 240,240,240 ) );
 
-   m_TabsAndSpaces = Xml.GetBoolElem( "ShowTabsAndSpaces", false );
-   m_LineBreaks = Xml.GetBoolElem( "ShowLineBreaks", false );
-   m_LineNumbers = Xml.GetBoolElem( "ShowLineNumbers", true );
+   m_TabsAndSpaces = Xml.GetBoolElem( L"ShowTabsAndSpaces", false );
+   m_LineBreaks = Xml.GetBoolElem( L"ShowLineBreaks", false );
+   m_LineNumbers = Xml.GetBoolElem( L"ShowLineNumbers", true );
 
-   m_ShowAllMods        = Xml.GetBoolElem( "ShowAllMods", false );
-   m_ShowAllFiles       = Xml.GetBoolElem( "ShowAllFiles", true );
-   m_SyncProjectTree    = Xml.GetBoolElem( "SyncProjectTree", true );
+   m_ShowAllMods        = Xml.GetBoolElem( L"ShowAllMods", false );
+   m_ShowAllFiles       = Xml.GetBoolElem( L"ShowAllFiles", true );
+   m_SyncProjectTree    = Xml.GetBoolElem( L"SyncProjectTree", true );
 
-   m_CheckForUpdates = Xml.GetBoolElem( "CheckForUpdates", true );
+   m_CheckForUpdates = Xml.GetBoolElem( L"CheckForUpdates", true );
 
    m_ToolCommands.Clear();
-   if ( Xml.FindElem( "ExternalTools" ) )
+   if ( Xml.FindElem( L"ExternalTools" ) )
    {
       Xml.IntoElem();
 
-      while ( Xml.FindElem( "Tool" ) && Xml.IntoElem() )
+      while ( Xml.FindElem( L"Tool" ) && Xml.IntoElem() )
       {
          ToolCommand cmd;
-         cmd.SetTitle( Xml.GetStringElem( "Title", "(Empty)" ) );
-         cmd.SetCmd( Xml.GetStringElem( "Command", wxEmptyString ) );
-         cmd.SetArgs( Xml.GetStringElem( "Arguments", wxEmptyString ) );
-         cmd.SetDir( Xml.GetStringElem( "Directory", wxEmptyString ) );
+         cmd.SetTitle( Xml.GetStringElem( L"Title", L"(Empty)" ) );
+         cmd.SetCmd( Xml.GetStringElem( L"Command", wxEmptyString ) );
+         cmd.SetArgs( Xml.GetStringElem( L"Arguments", wxEmptyString ) );
+         cmd.SetDir( Xml.GetStringElem( L"Directory", wxEmptyString ) );
          m_ToolCommands.Add( cmd );
          Xml.OutOfElem();
       }
@@ -250,7 +252,7 @@ void AppPrefs::LoadFromString( const wxChar* Buffer )
    else
    {
       ToolCommand cmd;
-      cmd.SetTitle( "(Empty)" );
+      cmd.SetTitle( L"(Empty)" );
       m_ToolCommands.Add( cmd );
       m_ToolCommands.Add( cmd );
       m_ToolCommands.Add( cmd );
@@ -268,114 +270,114 @@ bool AppPrefs::Save( const wxString& Path )
 	}
 
 	XmlFile Xml;
-	Xml.AddElem( "TorsionPrefs" );
+	Xml.AddElem( L"TorsionPrefs" );
 	Xml.IntoElem();
 
-   Xml.AddElem( "DefaultFont", m_DefaultFont.GetNativeFontInfoDesc() );
+   Xml.AddElem( L"DefaultFont", MCD_CSTR(m_DefaultFont.GetNativeFontInfoDesc()) );
 
-   Xml.AddElem( "ReservedWords", m_Reserved );
-	Xml.AddAttrib( "color", Xml.ColorToString( m_ReservedColor ) );
+   Xml.AddElem( L"ReservedWords", MCD_CSTR(m_Reserved ));
+	Xml.AddAttrib( L"color", MCD_CSTR(Xml.ColorToString( m_ReservedColor) ) );
 
-	Xml.AddElem( "ExportsColor", Xml.ColorToString( m_ExportsColor ) );
+	Xml.AddElem( L"ExportsColor", MCD_CSTR(Xml.ColorToString( m_ExportsColor) ) );
 
-   Xml.AddColorElem( "BgColor", m_BgColor );
+   Xml.AddColorElem( L"BgColor", m_BgColor );
 
-   Xml.AddColorElem( "DefaultColor", m_DefaultColor );
-   Xml.AddColorElem( "CommentColor", m_CommentColor );
-   Xml.AddColorElem( "StringColor", m_StringColor );
-   Xml.AddColorElem( "NumberColor", m_NumberColor );
-   Xml.AddColorElem( "OperatorsColor", m_OperatorsColor );
-   Xml.AddColorElem( "LocalsColor", m_LocalsColor );
-   Xml.AddColorElem( "GlobalsColor", m_GlobalsColor );
+   Xml.AddColorElem( L"DefaultColor", m_DefaultColor );
+   Xml.AddColorElem( L"CommentColor", m_CommentColor );
+   Xml.AddColorElem( L"StringColor", m_StringColor );
+   Xml.AddColorElem( L"NumberColor", m_NumberColor );
+   Xml.AddColorElem( L"OperatorsColor", m_OperatorsColor );
+   Xml.AddColorElem( L"LocalsColor", m_LocalsColor );
+   Xml.AddColorElem( L"GlobalsColor", m_GlobalsColor );
 
-   Xml.AddColorElem( "SelColor", m_SelColor );
-   Xml.AddColorElem( "SelBgColor", m_SelBgColor );
+   Xml.AddColorElem( L"SelColor", m_SelColor );
+   Xml.AddColorElem( L"SelBgColor", m_SelBgColor );
 
-   Xml.AddColorElem( "BraceMatchColor", m_BraceMatchColor );
-   Xml.AddColorElem( "BraceMatchBgColor", m_BraceMatchBgColor );
-   Xml.AddColorElem( "BraceMatchErrColor", m_BraceMatchErrColor );
+   Xml.AddColorElem( L"BraceMatchColor", m_BraceMatchColor );
+   Xml.AddColorElem( L"BraceMatchBgColor", m_BraceMatchBgColor );
+   Xml.AddColorElem( L"BraceMatchErrColor", m_BraceMatchErrColor );
 
-   Xml.AddColorElem( "CalltipColor", m_CalltipColor );
-   Xml.AddColorElem( "CalltipBgColor", m_CalltipBgColor );
-   Xml.AddColorElem( "CalltipHiColor", m_CalltipHiColor );
+   Xml.AddColorElem( L"CalltipColor", m_CalltipColor );
+   Xml.AddColorElem( L"CalltipBgColor", m_CalltipBgColor );
+   Xml.AddColorElem( L"CalltipHiColor", m_CalltipHiColor );
 
-   Xml.AddColorElem( "MarginColor", m_MarginColor );
-   Xml.AddColorElem( "MarginTextColor", m_MarginTextColor );
+   Xml.AddColorElem( L"MarginColor", m_MarginColor );
+   Xml.AddColorElem( L"MarginTextColor", m_MarginTextColor );
 
-   Xml.AddBoolElem( "CodeFolding", m_CodeFolding );
-   Xml.AddColorElem( "CodeFoldingColor", m_CodeFoldingColor );
+   Xml.AddBoolElem( L"CodeFolding", m_CodeFolding );
+   Xml.AddColorElem( L"CodeFoldingColor", m_CodeFoldingColor );
 
-   Xml.AddBoolElem( "CodeCompletion", m_CodeCompletion );
+   Xml.AddBoolElem( L"CodeCompletion", m_CodeCompletion );
 
-   Xml.AddBoolElem( "EnhancedCompletion", m_EnhancedCompletion );
+   Xml.AddBoolElem( L"EnhancedCompletion", m_EnhancedCompletion );
    
-   Xml.AddElem( "Position", RectToString( m_Position ) );
-   Xml.AddBoolElem( "Maximized", m_Maximized );
+   Xml.AddElem( L"Position", MCD_CSTR(RectToString( m_Position )) );
+   Xml.AddBoolElem( L"Maximized", m_Maximized );
 
-   Xml.AddIntElem( "ProjectSashWidth", m_ProjectSashWidth );
-   Xml.AddIntElem( "BottomSashHeight", m_BottomSashHeight );
+   Xml.AddIntElem( L"ProjectSashWidth", m_ProjectSashWidth );
+   Xml.AddIntElem( L"BottomSashHeight", m_BottomSashHeight );
 
-   Xml.AddBoolElem( "UseTabs", GetUseTabs() );
-   Xml.AddIntElem( "TabWidth", GetTabWidth() );
-   Xml.AddBoolElem( "LineWrap", GetLineWrap() );
+   Xml.AddBoolElem( L"UseTabs", GetUseTabs() );
+   Xml.AddIntElem( L"TabWidth", GetTabWidth() );
+   Xml.AddBoolElem( L"LineWrap", GetLineWrap() );
 
-   Xml.AddBoolElem( "EdgeMarker", GetEdgeMarker() );
-   Xml.AddIntElem( "EdgeMarkerColumn", GetEdgeMarkerCol() );
-   Xml.AddColorElem( "EdgeMarkerColor", GetEdgeMarkerColor() );
+   Xml.AddBoolElem( L"EdgeMarker", GetEdgeMarker() );
+   Xml.AddIntElem( L"EdgeMarkerColumn", GetEdgeMarkerCol() );
+   Xml.AddColorElem( L"EdgeMarkerColor", GetEdgeMarkerColor() );
 
-   Xml.AddBoolElem( "ShowTabsAndSpaces", GetTabsAndSpaces() );
-   Xml.AddBoolElem( "ShowLineBreaks", GetLineBreaks() );
-   Xml.AddBoolElem( "ShowLineNumbers", GetLineNumbers() );
+   Xml.AddBoolElem( L"ShowTabsAndSpaces", GetTabsAndSpaces() );
+   Xml.AddBoolElem( L"ShowLineBreaks", GetLineBreaks() );
+   Xml.AddBoolElem( L"ShowLineNumbers", GetLineNumbers() );
 
-   Xml.AddArrayStringElems( "FileHistory", "File", m_FileHistory );
-   Xml.AddArrayStringElems( "ProjectHistory", "Project", m_ProjectHistory );
+   Xml.AddArrayStringElems( L"FileHistory", L"File", m_FileHistory );
+   Xml.AddArrayStringElems( L"ProjectHistory", L"Project", m_ProjectHistory );
 
-   Xml.AddArrayStringElems( "FindHistory", "String", m_FindStrings );
-   Xml.AddArrayStringElems( "FindTypes", "Type", m_FindTypes );
-   Xml.AddArrayStringElems( "FindPaths", "Path", m_FindPaths );
+   Xml.AddArrayStringElems( L"FindHistory", L"String", m_FindStrings );
+   Xml.AddArrayStringElems( L"FindTypes", L"Type", m_FindTypes );
+   Xml.AddArrayStringElems( L"FindPaths", L"Path", m_FindPaths );
 
-   Xml.AddBoolElem( "FindMatchCase", m_FindMatchCase );
-   Xml.AddBoolElem( "FindMatchWord", m_FindMatchWord );
-   Xml.AddBoolElem( "FindSearchUp", m_FindSearchUp );
+   Xml.AddBoolElem( L"FindMatchCase", m_FindMatchCase );
+   Xml.AddBoolElem( L"FindMatchWord", m_FindMatchWord );
+   Xml.AddBoolElem( L"FindSearchUp", m_FindSearchUp );
 
-   Xml.AddPointElem( "FindPos", m_FindPos );
+   Xml.AddPointElem( L"FindPos", m_FindPos );
 
-   Xml.AddArrayStringElems( "FindSymbols", "String", m_FindSymbols );
+   Xml.AddArrayStringElems( L"FindSymbols", L"String", m_FindSymbols );
 
-   Xml.AddBoolElem( "LoadLastProject", m_LoadLastProject );
-   Xml.AddElem( "LastProject", m_LastProject );
+   Xml.AddBoolElem( L"LoadLastProject", m_LoadLastProject );
+   Xml.AddElem( L"LastProject", MCD_CSTR(m_LastProject) );
 
-   Xml.AddElem( "ScriptExtensions", GetScriptExtsString() );
-   Xml.AddElem( "DSOExts", GetDSOExtsString() );
-   Xml.AddArrayStringElems( "ExcludedFileNames", "Name", m_ExcludedFiles );
-   Xml.AddArrayStringElems( "ExcludedFolderNames", "Name", m_ExcludedFolders );
-   Xml.AddArrayStringElems( "TextExts", "Ext", m_TextExts );
+   Xml.AddElem( L"ScriptExtensions", MCD_CSTR(GetScriptExtsString() ));
+   Xml.AddElem( L"DSOExts", MCD_CSTR(GetDSOExtsString() ));
+   Xml.AddArrayStringElems( L"ExcludedFileNames", L"Name", m_ExcludedFiles );
+   Xml.AddArrayStringElems( L"ExcludedFolderNames", L"Name", m_ExcludedFolders );
+   Xml.AddArrayStringElems( L"TextExts", L"Ext", m_TextExts );
 
-   Xml.AddBoolElem( "ShowAllMods", m_ShowAllMods );
-   Xml.AddBoolElem( "ShowAllFiles", m_ShowAllFiles );
-   Xml.AddBoolElem( "SyncProjectTree", m_SyncProjectTree );
+   Xml.AddBoolElem( L"ShowAllMods", m_ShowAllMods );
+   Xml.AddBoolElem( L"ShowAllFiles", m_ShowAllFiles );
+   Xml.AddBoolElem( L"SyncProjectTree", m_SyncProjectTree );
 
-   Xml.AddBoolElem( "CheckForUpdates", m_CheckForUpdates );
+   Xml.AddBoolElem( L"CheckForUpdates", m_CheckForUpdates );
 
-   Xml.AddElem( "ExternalTools" );
+   Xml.AddElem( L"ExternalTools" );
 	Xml.IntoElem();
    for ( size_t i=0; i < m_ToolCommands.GetCount(); i++ ) 
    {
       const ToolCommand& cmd = m_ToolCommands[i];
 
-      Xml.AddElem( "Tool" );
+      Xml.AddElem( L"Tool" );
 	   Xml.IntoElem();
 
-         Xml.AddElem( "Title", cmd.GetTitle() );
-         Xml.AddElem( "Command", cmd.GetCmd() );
-         Xml.AddElem( "Arguments", cmd.GetArgs() );
-         Xml.AddElem( "Directory", cmd.GetDir() );
+         Xml.AddElem( L"Title", MCD_CSTR(cmd.GetTitle() ));
+         Xml.AddElem( L"Command", MCD_CSTR(cmd.GetCmd() ));
+         Xml.AddElem( L"Arguments", MCD_CSTR(cmd.GetArgs() ));
+         Xml.AddElem( L"Directory", MCD_CSTR(cmd.GetDir() ));
 
       Xml.OutOfElem();
    }
    Xml.OutOfElem();
 
-   std::string Buffer( Xml.GetDoc() );
+   std::string Buffer( narrow(Xml.GetDoc() ));
 	File.Write( Buffer.c_str(), Buffer.length() );
 
    return true;
@@ -396,7 +398,7 @@ static int CmpStringOrderNoCase( const wxString& first, const wxString& second )
 
 void AppPrefs::ReformatWords( wxString& Words )
 {
-	wxStringTokenizer Tokenizer( Words, "\t\r\n ,;", wxTOKEN_STRTOK );
+	wxStringTokenizer Tokenizer( Words, L"\t\r\n ,;", wxTOKEN_STRTOK );
    wxArrayString Sorted;
 	wxString Token;
 	while ( Tokenizer.HasMoreTokens() ) {
@@ -411,20 +413,20 @@ void AppPrefs::ReformatWords( wxString& Words )
 
    Words.Empty();
    for ( int i=0; i < Sorted.GetCount(); i++ ) {
-      Words << ( i != 0 ? " " : "" ) << Sorted[i];
+      Words << ( i != 0 ? L" " : L"" ) << Sorted[i];
    }
 }
 
 wxString AppPrefs::ColorToString( const wxColour& Color )
 {
 	wxString Result;
-   Result << Color.Red() << "," << Color.Green() << "," << Color.Blue();
+   Result << Color.Red() << L"," << Color.Green() << L"," << Color.Blue();
 	return Result;
 }
 
 wxColour AppPrefs::StringToColor( const wxString& Color )
 {
-	wxStringTokenizer Tokenizer( Color, "\t\r\n ,;", wxTOKEN_STRTOK );
+	wxStringTokenizer Tokenizer( Color, L"\t\r\n ,;", wxTOKEN_STRTOK );
 
 	wxString Token = Tokenizer.GetNextToken();
 	Token.Trim( true );
@@ -453,13 +455,13 @@ wxColour AppPrefs::StringToColor( const wxString& Color )
 wxString AppPrefs::RectToString( const wxRect& Rect )
 {
 	wxString Result;
-   Result << Rect.GetLeft() << "," << Rect.GetTop() << "," << Rect.GetWidth() << "," << Rect.GetHeight();
+   Result << Rect.GetLeft() << L"," << Rect.GetTop() << L"," << Rect.GetWidth() << L"," << Rect.GetHeight();
 	return Result;
 }
 
 wxRect AppPrefs::StringToRect( const wxString& Rect )
 {
-	wxStringTokenizer Tokenizer( Rect, "\t\r\n ,;", wxTOKEN_STRTOK );
+	wxStringTokenizer Tokenizer( Rect, L"\t\r\n ,;", wxTOKEN_STRTOK );
 
 	wxString Token = Tokenizer.GetNextToken();
 	Token.Trim( true );
@@ -547,7 +549,7 @@ bool AppPrefs::IsExcludedFile( const wxString& file ) const
    wxFileName fixed( file );
 
    wxString ext;
-   ext << "." << fixed.GetExt();
+   ext << L"." << fixed.GetExt();
 
    return 
       m_ExcludedFiles.Index( fixed.GetFullName(), wxFileName::IsCaseSensitive() ) != wxNOT_FOUND ||
@@ -591,15 +593,15 @@ void AppPrefs::FixupFindPaths( wxArrayString& paths )
    if ( paths.GetCount() > 20 )
       paths.SetCount( 20 );
 
-   if ( paths.Index( "Project", false ) != wxNOT_FOUND ) 
+   if ( paths.Index( L"Project", false ) != wxNOT_FOUND ) 
       paths.RemoveAt( paths.GetCount() - 1 );
-   if ( paths.Index( "Base Directory", false ) != wxNOT_FOUND ) 
+   if ( paths.Index( L"Base Directory", false ) != wxNOT_FOUND ) 
       paths.RemoveAt( paths.GetCount() - 1 );
 
-   if ( paths.Index( "Project", false ) == wxNOT_FOUND )
-      paths.Add( "Project" );
-   if ( paths.Index( "Base Directory", false ) == wxNOT_FOUND )
-      paths.Add( "Base Directory" );
+   if ( paths.Index( L"Project", false ) == wxNOT_FOUND )
+      paths.Add( L"Project" );
+   if ( paths.Index( L"Base Directory", false ) == wxNOT_FOUND )
+      paths.Add( L"Base Directory" );
 }
 
 void AppPrefs::SetFindSymbols( const wxArrayString& strings ) 
@@ -637,7 +639,7 @@ void AppPrefs::AddStringsToCombo( wxComboBox* combo, const wxArrayString& string
 
 bool AppPrefs::SetScriptExtsString( const wxString& value )
 {
-	wxStringTokenizer toker( value, ",;", wxTOKEN_STRTOK );
+	wxStringTokenizer toker( value, L",;", wxTOKEN_STRTOK );
    wxArrayString exts;
    wxString ext;
 	while ( toker.HasMoreTokens() ) {
@@ -671,7 +673,7 @@ bool AppPrefs::SetScriptExtsString( const wxString& value )
 
 wxString AppPrefs::GetDefaultScriptExtension() const
 {
-   wxString ext( "cs" );
+   wxString ext( L"cs" );
    if ( m_ScriptExts.GetCount() > 0 )
       ext = m_ScriptExts[0];
    return ext;
@@ -682,7 +684,7 @@ wxString AppPrefs::GetScriptExtsString() const
    wxString exts;
 
    for ( int i=0; i < m_ScriptExts.GetCount(); i++ )
-      exts << m_ScriptExts[i] << "; ";
+      exts << m_ScriptExts[i] << L"; ";
 
    exts.RemoveLast(2);
 
@@ -691,7 +693,7 @@ wxString AppPrefs::GetScriptExtsString() const
 
 bool AppPrefs::SetExcludedFiles( const wxString& exclude )
 {
-	wxStringTokenizer toker( exclude, ",;", wxTOKEN_STRTOK );
+	wxStringTokenizer toker( exclude, L",;", wxTOKEN_STRTOK );
    wxArrayString files;
    wxString file;
 	while ( toker.HasMoreTokens() ) {
@@ -717,7 +719,7 @@ wxString AppPrefs::GetExcludedFilesString() const
    wxString exclude;
 
    for ( int i=0; i < m_ExcludedFiles.GetCount(); i++ )
-      exclude << m_ExcludedFiles[i] << "; ";
+      exclude << m_ExcludedFiles[i] << L"; ";
 
    exclude.RemoveLast(2);
 
@@ -726,7 +728,7 @@ wxString AppPrefs::GetExcludedFilesString() const
 
 bool AppPrefs::SetExcludedFolders( const wxString& exclude )
 {
-	wxStringTokenizer toker( exclude, ",;", wxTOKEN_STRTOK );
+	wxStringTokenizer toker( exclude, L",;", wxTOKEN_STRTOK );
    wxArrayString folders;
    wxString folder;
 	while ( toker.HasMoreTokens() ) {
@@ -752,7 +754,7 @@ wxString AppPrefs::GetExcludedFoldersString() const
    wxString exclude;
 
    for ( int i=0; i < m_ExcludedFolders.GetCount(); i++ )
-      exclude << m_ExcludedFolders[i] << "; ";
+      exclude << m_ExcludedFolders[i] << L"; ";
 
    exclude.RemoveLast(2);
 
@@ -761,7 +763,7 @@ wxString AppPrefs::GetExcludedFoldersString() const
 
 bool AppPrefs::SetDSOExtsString( const wxString& value )
 {
-	wxStringTokenizer toker( value, ",;", wxTOKEN_STRTOK );
+	wxStringTokenizer toker( value, L",;", wxTOKEN_STRTOK );
    wxArrayString exts;
    wxString ext;
 	while ( toker.HasMoreTokens() ) {
@@ -798,7 +800,7 @@ wxString AppPrefs::GetDSOExtsString() const
    wxString exts;
 
    for ( int i=0; i < m_DSOExts.GetCount(); i++ )
-      exts << m_DSOExts[i] << "; ";
+      exts << m_DSOExts[i] << L"; ";
 
    exts.RemoveLast(2);
 

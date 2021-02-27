@@ -28,11 +28,11 @@ public:
 	bool		Connect( const wxString& Address, int Port, const wxString& Password, const wxString& cmd );
 
 	void		Break();
-	void		Continue( const wxString& Command = "CONTINUE" );
+	void		Continue( const wxString& Command = L"CONTINUE" );
 	void		Stop( bool disconnect = false );
-	void		Step()		{ Continue( "STEPIN" ); }
-	void		StepOver()	{ Continue( "STEPOVER" ); }
-	void		StepOut()	{ Continue( "STEPOUT" ); }
+	void		Step()		{ Continue( L"STEPIN" ); }
+	void		StepOver()	{ Continue( L"STEPOVER" ); }
+	void		StepOut()	{ Continue( L"STEPOUT" ); }
 
 	void		EvalCallTip( const wxString& expression );
 	void		Eval( const wxString& expression, int tag = 0 );

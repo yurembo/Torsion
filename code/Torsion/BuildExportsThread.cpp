@@ -75,13 +75,13 @@ wxThread::ExitCode BuildExportsThread::Entry()
 
    // Copy the script to the working path.
    m_ExportScript.AssignDir( m_WorkingDir );
-   m_ExportScript.SetFullName( "torsion_exports.tmp" );
+   m_ExportScript.SetFullName( L"torsion_exports.tmp" );
    if ( !wxCopyFile( m_SourceExportScript.GetFullPath(), m_ExportScript.GetFullPath() ) )
       return 0;
 
    wxFileName output;
    output.AssignDir( m_WorkingDir );
-   output.SetFullName( "console.log" );
+   output.SetFullName( L"console.log" );
    
    _AddProgress( pinc );
 
@@ -116,7 +116,7 @@ wxThread::ExitCode BuildExportsThread::Entry()
       memset(&se, 0, sizeof(se)); 
       se.cbSize = sizeof(se); 
       se.fMask = SEE_MASK_DOENVSUBST | SEE_MASK_NOCLOSEPROCESS | SEE_MASK_FLAG_NO_UI; 
-      se.lpVerb = "open";
+      se.lpVerb = L"open";
       se.lpFile = exe.c_str();
       se.lpDirectory = m_WorkingDir.c_str();
       se.lpParameters = args.c_str(); 

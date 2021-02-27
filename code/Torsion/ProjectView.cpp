@@ -210,16 +210,16 @@ void ProjectView::OnExplore( wxCommandEvent& event )
    wxASSERT( m_ProjectCtrl );
    wxFileName path( m_ProjectCtrl->GetSelectedPath() );
    if ( !path.IsDir() ) {
-      path.SetFullName( "" );
+      path.SetFullName( L"" );
    }
-   tsExecuteVerb( path.GetFullPath(), "open" );
+   tsExecuteVerb( path.GetFullPath(), L"open" );
 }
 
 void ProjectView::OnProperties( wxCommandEvent& event )
 {
    wxASSERT( m_ProjectCtrl );
    wxFileName path( m_ProjectCtrl->GetSelectedPath() );
-   tsExecuteVerb( path.GetFullPath(), "properties" );
+   tsExecuteVerb( path.GetFullPath(), L"properties" );
 }
 
 void ProjectView::OnUpdateDelete( wxUpdateUIEvent& event )
@@ -438,7 +438,7 @@ void ProjectView::OnBookmarkClearAll( wxCommandEvent& event )
    ProjectDoc* doc = (ProjectDoc*)GetDocument();
    wxASSERT( doc );
    
-   wxMessageDialog dialog( tsGetMainFrame(), "Are you sure you want to delete all of the bookmarks?", "Torsion", wxYES_NO );
+   wxMessageDialog dialog( tsGetMainFrame(), L"Are you sure you want to delete all of the bookmarks?", L"Torsion", wxYES_NO );
 	if ( dialog.ShowModal() != wxID_YES )
       return;
 

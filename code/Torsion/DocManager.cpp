@@ -88,8 +88,8 @@ void DocManager::UpdateScriptFileTemplates()
       ext.MakeLower();
 
       wxString filter;
-      filter << "*." << ext;
-      allExtsFilter << filter << ";";
+      filter << L"*." << ext;
+      allExtsFilter << filter << L";";
 
       if ( i == 0 )
       {

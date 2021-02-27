@@ -153,9 +153,9 @@ void BreakpointsPanel::CreateControls()
    m_Toolbar->Realize();
 
    m_BreakList->SetImageList( m_Icons, wxIMAGE_LIST_SMALL );
-	m_BreakList->InsertColumn( 0, "Name", wxLIST_FORMAT_LEFT, 300 );
-	m_BreakList->InsertColumn( 1, "Condition", wxLIST_FORMAT_LEFT, 125 );
-	m_BreakList->InsertColumn( 2, "Hit Count", wxLIST_FORMAT_LEFT, 125 );
+	m_BreakList->InsertColumn( 0, L"Name", wxLIST_FORMAT_LEFT, 300 );
+	m_BreakList->InsertColumn( 1, L"Condition", wxLIST_FORMAT_LEFT, 125 );
+	m_BreakList->InsertColumn( 2, L"Hit Count", wxLIST_FORMAT_LEFT, 125 );
 }
 
 /*!
@@ -249,12 +249,12 @@ void BreakpointsPanel::UpdateBreakpoint( long item, Breakpoint* bp )
    wxASSERT( item < m_BreakList->GetItemCount() );
 
    wxString name;
-   name << bp->GetFile() << ", line " << bp->GetLine();
+   name << bp->GetFile() << L", line " << bp->GetLine();
    m_BreakList->SetItem( item, 0, name );
 
    wxString condition = bp->GetCondition();
    if ( condition.IsEmpty() )
-      condition = "(no condition)";
+      condition = L"(no condition)";
 
    m_BreakList->SetItem( item, 1, condition );
 
@@ -262,7 +262,7 @@ void BreakpointsPanel::UpdateBreakpoint( long item, Breakpoint* bp )
    if ( bp->GetPass() > 0 )
       pass << bp->GetPass();
    else 
-      pass << "(break always)";
+      pass << L"(break always)";
 
    m_BreakList->SetItem( item, 2, pass );
 
@@ -405,7 +405,7 @@ void BreakpointsPanel::OnUpdateToggleUI( wxUpdateUIEvent& event )
    event.Enable( selected.GetCount() > 0 );
 
    wxASSERT( m_Toolbar );
-   m_Toolbar->SetToolShortHelp( tsID_SCRIPT_TOGGLEBREAKPOINT, enabled ? "Disable" : "Enable" );
+   m_Toolbar->SetToolShortHelp( tsID_SCRIPT_TOGGLEBREAKPOINT, enabled ? L"Disable" : L"Enable" );
 }
 
 void BreakpointsPanel::OnUpdateUI( wxUpdateUIEvent& event )

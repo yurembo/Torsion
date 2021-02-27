@@ -15,6 +15,7 @@
 #include "ConnectDlg.h"
 #include "tsShellExecute.h"
 
+#include "helper.h"
 
 #ifdef __WXMSW__
    #include <process.h>
@@ -85,10 +86,10 @@ bool Debugger::Start( const wxString& configName, const wxString& cmd )
       // the user first so that they can maybe correct
       // the issue.
 		wxMessageDialog dlg( NULL,
-         "The entry script could not be updated to inject the debug hook "
-         "because it was locked, read only, or didn't exist.  Either disable "
-         "OneClick Debugging in this configuration or correct the problem "
-         "with your entry script file.", "Error", wxOK | wxICON_ERROR );
+         L"The entry script could not be updated to inject the debug hook "
+         L"because it was locked, read only, or didn't exist.  Either disable "
+         L"OneClick Debugging in this configuration or correct the problem "
+         L"with your entry script file.", L"Error", wxOK | wxICON_ERROR );
 		dlg.ShowModal();
 
       return false;
@@ -99,9 +100,9 @@ bool Debugger::Start( const wxString& configName, const wxString& cmd )
 
    // Launch the executable!
    wxASSERT( !m_Process->isRunning() );
-	if ( !m_Process->exec( "open", workingDir, exe, args, tsSW_SHOWNORMAL ) )
+	if ( !m_Process->exec( L"open", workingDir, exe, args, tsSW_SHOWNORMAL ) )
    {
-		wxMessageDialog MessageBox( NULL, "Executable launch failed!", "Error", wxOK | wxICON_ERROR );
+		wxMessageDialog MessageBox( NULL, L"Executable launch failed!", L"Error", wxOK | wxICON_ERROR );
 		MessageBox.ShowModal();
 
       if ( config->InjectDebugger() )
@@ -119,7 +120,7 @@ bool Debugger::Start( const wxString& configName, const wxString& cmd )
    // 2. 127.0.0.1/localhost is always used for one-click-debugging.
    // 3. Store the address/port/password for remote connections in app prefs.
    //
-   return Connect( "127.0.0.1", Port, Password, cmd );
+   return Connect( L"127.0.0.1", Port, Password, cmd );
 }
 
 bool Debugger::Connect( const wxString& Address, int Port, const wxString& Password, const wxString& cmd )
@@ -151,7 +152,7 @@ bool Debugger::Connect( const wxString& Address, int Port, const wxString& Passw
    {
 		Stop();
 
-		wxMessageDialog dlg( NULL, "Connection to executable failed!", "Error", wxOK );
+		wxMessageDialog dlg( NULL, L"Connection to executable failed!", L"Error", wxOK );
 		dlg.ShowModal();
 		return false;
 	}
@@ -175,7 +176,7 @@ bool Debugger::Connect( const wxString& Address, int Port, const wxString& Passw
    // will ignore this and just start up in a weird state.
 	_SendLine( Project->GetPassword() );
 	_WriteBreakpoints( tsGetMainFrame()->GetProjectDoc()->GetBreakpoints() );
-   _SendLine( cmd.IsEmpty() ? "CONTINUE" : cmd );
+   _SendLine( cmd.IsEmpty() ? L"CONTINUE" : cmd );
 
 	return IsRunning();
 }
@@ -185,7 +186,7 @@ void Debugger::_SendLine( const wxString& Line )
 	wxASSERT( m_Server );
 
 	wxString Buffer;
-	Buffer << Line << "\r\n";
+	Buffer << Line << L"\r\n";
 	m_Server->Write( Buffer.GetData(), Buffer.Length() );
 }
 
@@ -237,7 +238,7 @@ void Debugger::Break()
 	wxASSERT( !m_AtBreakpoint );
 
 	// Write the command...
-	_SendLine( "BRKNEXT" );
+	_SendLine( L"BRKNEXT" );
 }
 
 void Debugger::Continue( const wxString& Command )
@@ -266,7 +267,7 @@ void Debugger::Continue( const wxString& Command )
       // Do we need to ask about reloading?
       if ( reload )
       {
-         wxMessageDialog dlg( NULL, "There are changes to your script files.  Do you wish to reload them now?", "Torsion", wxYES_NO | wxICON_QUESTION );
+         wxMessageDialog dlg( NULL, L"There are changes to your script files.  Do you wish to reload them now?", L"Torsion", wxYES_NO | wxICON_QUESTION );
          reload = dlg.ShowModal() == wxID_YES;
       }
 
@@ -343,11 +344,11 @@ void Debugger::OnSocketEvent( wxSocketEvent& Event )
 	// Ok the server is sending us a command... look for the first line.
 	char data[MaxCommandSize];
     m_Server->Read( data, MaxCommandSize );
-    m_InputBuffer.Append( data, m_Server->LastCount() );
+	m_InputBuffer.Append( widen(data).c_str(), m_Server->LastCount() );
     
 	wxString line;
 	int pos;
-	while ( ( pos = m_InputBuffer.Find( "\r\n" ) ) != -1 ) {
+	while ( ( pos = m_InputBuffer.Find( L"\r\n" ) ) != -1 ) {
 
         line = m_InputBuffer.Left( pos );
 		m_InputBuffer = m_InputBuffer.Mid( pos + 2 );
@@ -409,33 +410,38 @@ void Debugger::Eval( const wxString& expression, int tag )
       // The right thing would be to fix EVAL in the TelenetDebugger to assume
       // that the expression is a complete statement and that return isn't needed.
       //
-		Command << "EVAL " << tag << " " << m_CurrStackLevel << " " << expression;
+		Command << L"EVAL " << tag << L" " << m_CurrStackLevel << L" " << expression;
    }
 	else
-		Command << "CEVAL " << expression;
+		Command << L"CEVAL " << expression;
 
 	_SendLine( Command );
 }
 
+bool ISCOMMAND(const wxString& CMD, const wxString& line) //my_cod
+{
+	return wcsncmp( line, CMD, sizeof( CMD ) - 1 ) == 0;
+}
+
 void Debugger::_OnServerMessage( const wxString& line )
 {
-	#define ISCOMMAND( CMD ) strnicmp( line.c_str(), CMD, sizeof( CMD ) - 1 ) == 0
+	//#define ISCOMMAND( CMD ) strnicmp( line.c_str(), CMD, sizeof( CMD ) - 1 ) == 0
 
 	// What command did we get?
-	if ( ISCOMMAND( "PASS Connected" ) ) 
+	if ( ISCOMMAND( L"PASS Connected", line ) ) 
    {
 		// We're succesfully connected!
 		return;
 	} 
-   else if ( ISCOMMAND( "PASS" ) ) 
+   else if ( ISCOMMAND( L"PASS", line ) ) 
    {
-      wxMessageDialog dlg( NULL, "Connection to debug server failed: Invalid password!", "Error", wxOK );
+      wxMessageDialog dlg( NULL, L"Connection to debug server failed: Invalid password!", L"Error", wxOK );
 		dlg.ShowModal();
 
 		// Wrong password ... stop!
 		Stop( true );
 	} 
-   else if ( ISCOMMAND( "COUT" ) ) 
+   else if ( ISCOMMAND( L"COUT", line ) ) 
    {
       wxString temp( line.c_str() + 5 );
       EscapeTorqueML( temp );
@@ -449,24 +455,24 @@ void Debugger::_OnServerMessage( const wxString& line )
       {
          WatchVar* var = m_UpdateVarStack[0];
          if ( !var->GetValue().IsEmpty() )
-            temp = var->GetValue() + "\r\n" + temp;
+            temp = var->GetValue() + L"\r\n" + temp;
          var->SetValue( temp );
       }
       else
       {
-         temp.Append( "\r\n" );
+         temp.Append( L"\r\n" );
 		   tsGetMainFrame()->GetOutputPanel()->AppendText( temp );
       }
 	} 
-   else if ( ISCOMMAND( "FILELISTOUT" ) ) 
+   else if ( ISCOMMAND( L"FILELISTOUT", line ) ) 
    {
 		wxASSERT( false );
 	} 
-   else if ( ISCOMMAND( "BREAKLISTOUT" ) ) 
+   else if ( ISCOMMAND( L"BREAKLISTOUT", line ) ) 
    {
 		wxASSERT( false );
 	} 
-   else if ( ISCOMMAND( "BREAK" ) ) 
+   else if ( ISCOMMAND( L"BREAK" , line) ) 
    {
       // The latest TelnetDebugger update now properly sleeps
       // when in a breakpoint...  but we still should protect
@@ -479,13 +485,13 @@ void Debugger::_OnServerMessage( const wxString& line )
 
       _ReadBreakpointData( line.Mid( 6 ) );
 	} 
-   else if ( ISCOMMAND( "BRKMOV" ) ) 
+   else if ( ISCOMMAND( L"BRKMOV", line ) ) 
    {
 		wxString data = line.Mid( 7 );
       wxString file = data.BeforeFirst( ' ' );
 		data = data.AfterFirst( ' ' );
-      int line = atoi( data.BeforeFirst( ' ' ) );
-      int newline = atoi( data.AfterFirst( ' ' ) );
+      int line = _wtoi( data.BeforeFirst( ' ' ) );
+      int newline = _wtoi( data.AfterFirst( ' ' ) );
 
    	ProjectDoc* Project = tsGetMainFrame()->GetProjectDoc();
       wxASSERT( Project );
@@ -494,11 +500,11 @@ void Debugger::_OnServerMessage( const wxString& line )
       if ( bp )
          Project->MoveBreakpoint( bp, newline );
    } 
-   else if ( ISCOMMAND( "BRKCLR" ) ) 
+   else if ( ISCOMMAND( L"BRKCLR" , line) ) 
    {
 		wxString data = line.Mid( 7 );
       wxString file = data.BeforeFirst( ' ' );
-      int line = atoi( data.AfterFirst( ' ' ) );
+      int line = _wtoi( data.AfterFirst( ' ' ) );
 
    	ProjectDoc* Project = tsGetMainFrame()->GetProjectDoc();
       wxASSERT( Project );
@@ -507,7 +513,7 @@ void Debugger::_OnServerMessage( const wxString& line )
       if ( bp )
          Project->DeleteBreakpoint( bp );
    } 
-   else if ( ISCOMMAND( "RUNNING" ) ) 
+   else if ( ISCOMMAND( L"RUNNING", line ) ) 
    {
 		// Disable the breakpoint.
 		m_AtBreakpoint = false;
@@ -518,10 +524,10 @@ void Debugger::_OnServerMessage( const wxString& line )
       m_Process->setPriorityClass( tsPRIORITY_CLASS_NORMAL );
 		tsRaiseWindowFromProcessId( m_Process->getPid() );
 	} 
-   else if ( ISCOMMAND( "EVALOUT" ) ) 
+   else if ( ISCOMMAND( L"EVALOUT", line ) ) 
    {
 		wxString data = line.Mid( 8 );
-		int tag = atoi( data.BeforeFirst( ' ' ) );
+		int tag = _wtoi( data.BeforeFirst( ' ' ) );
 		wxString result = data.AfterFirst( ' ' );
       EscapeTorqueML( result );
 
@@ -532,7 +538,7 @@ void Debugger::_OnServerMessage( const wxString& line )
       if ( tag == 0 ) 
       {
          wxString temp;
-         temp << "EVALOUT ==> " << result << "\r\n";
+         temp << L"EVALOUT ==> " << result << L"\r\n";
          tsGetMainFrame()->GetOutputPanel()->AppendText( temp );
       } 
       else if ( tag == 1 ) 
@@ -559,7 +565,7 @@ void Debugger::_OnServerMessage( const wxString& line )
          tsGetMainFrame()->GetWatchWindow()->Refresh();
 		}
    } 
-   else if ( ISCOMMAND( "DBGERR" ) ) 
+   else if ( ISCOMMAND( L"DBGERR", line ) ) 
    {
 		// The debugger told us we we're bad!
 		// Not a huge deal... as some functions
@@ -602,7 +608,7 @@ void Debugger::_WriteBreakpoint( const Breakpoint* TheBreakpoint )
 	wxASSERT( TheBreakpoint );
 
    wxString File = TheBreakpoint->GetFile();
-	File.Replace( "\\", "/" );
+	File.Replace( L"\\", L"/" );
 
 	const wxString& Expression = TheBreakpoint->GetCondition();
 
@@ -610,16 +616,16 @@ void Debugger::_WriteBreakpoint( const Breakpoint* TheBreakpoint )
 
    if ( TheBreakpoint->GetEnabled() ) {
 
-	   Data.Printf( "BRKSET %s %d %s %d %s", 
+	   Data.Printf( L"BRKSET %s %d %s %d %s", 
 		   File, 
 		   TheBreakpoint->GetLine(),
-		   "false",
+		   L"false",
 		   TheBreakpoint->GetPass(),
-		   !Expression.IsEmpty() ? Expression : "true" );
+		   !Expression.IsEmpty() ? Expression : L"true" );
 
    } else {
 
-      Data.Printf( "BRKCLR %s %ld",
+      Data.Printf( L"BRKCLR %s %ld",
 	      File, 
 	      TheBreakpoint->GetLine() );
    }
@@ -717,14 +723,14 @@ void Debugger::_ReadBreakpointData( wxString callstackString )
 		wxString File = callstackString.BeforeFirst( ' ' );
 		callstackString = callstackString.AfterFirst( ' ' );
 
-		int Line = atoi( callstackString.BeforeFirst( ' ' ) );
+		int Line = _wtoi( callstackString.BeforeFirst( ' ' ) );
 		callstackString = callstackString.AfterFirst( ' ' );
 
 		wxString Function = callstackString.BeforeFirst( ' ' );
 		callstackString = callstackString.AfterFirst( ' ' );
 
-      if ( Function == "<none>" ) 
-         Function = "";
+      if ( Function == L"<none>" ) 
+         Function = L"";
 
 		m_CallStack.Add( new FunctionCall( l, File, Line, Function ) );
 	}
@@ -798,7 +804,7 @@ void Debugger::UpdateExpanded( WatchVar* Var )
 
    // Evaluate this var.
 	wxString Eval;
-	Eval.Printf( "EVAL %d %d %s", 
+	Eval.Printf( L"EVAL %d %d %s", 
 		Var->GetTag(),
 		m_CurrStackLevel, 
 		Name.c_str() );
@@ -857,13 +863,13 @@ void Debugger::ChangeVar( WatchVar* Var, const wxString& Value )
    // a weird function call.
    wxString Fixup = Value;
    if ( !Value.IsNumber() ) {
-      Fixup.Prepend( "\"" );
-      Fixup.Append( "\"" );
+      Fixup.Prepend( L"\"" );
+      Fixup.Append( L"\"" );
    }
 
    // Send one eval to change the var.
 	wxString Eval;
-   Eval.Printf( "EVAL 1 %d %s=%s", 
+   Eval.Printf( L"EVAL 1 %d %s=%s", 
 		m_CurrStackLevel, 
 		Name.c_str(),
       Fixup.c_str() );
@@ -871,7 +877,7 @@ void Debugger::ChangeVar( WatchVar* Var, const wxString& Value )
 
    // Now send another to get the new value and
    // update the watch window.
-   Eval.Printf( "EVAL %d %d %s", 
+   Eval.Printf( L"EVAL %d %d %s", 
 		Var->GetTag(),
 		m_CurrStackLevel, 
 		Name.c_str() );
@@ -898,13 +904,13 @@ void Debugger::UpdateVar( WatchVar* Var )
 		wxASSERT( Parent->IsExpanded() );
 		wxASSERT( Parent->IsExpandable() );
 
-		Name = Parent->GetName() + "." + Name;
+		Name = Parent->GetName() + L"." + Name;
 		Parent = Parent->GetParent();
 	}
 
    // Evaluate this var.
 	wxString Eval;
-	Eval.Printf( "EVAL %d %d %s", 
+	Eval.Printf( L"EVAL %d %d %s", 
 		Var->GetTag(),
 		m_CurrStackLevel, 
 		Name.c_str() );
@@ -948,10 +954,10 @@ void Debugger::MoveInstPtr( const wxString& file, int line )
    wxASSERT( project );
 
    wxString fixed = project->MakeReleativeTo( file );
-   fixed.Replace( "\\", "/" );
+   fixed.Replace( L"\\", L"/" );
 
    wxString cmd;
-   cmd << "MOVEIP " << fixed << " " << line;
+   cmd << L"MOVEIP " << fixed << L" " << line;
    _SendLine( cmd );
 }
 
@@ -967,10 +973,10 @@ void Debugger::ReloadScripts( const wxArrayString& scripts )
    for ( int i=0; i < scripts.GetCount(); i++ )
    {
       wxString fixed = project->MakeReleativeTo( scripts[i] );
-      fixed.Replace( "\\", "/" );
+      fixed.Replace( L"\\", L"/" );
 
       wxString cmd;
-      cmd << "RELOAD " << fixed;
+      cmd << L"RELOAD " << fixed;
       _SendLine( cmd );
    }
 
@@ -1010,13 +1016,13 @@ void Debugger::EscapeTorqueML( wxString& text )
       escape.Empty();
 
       if ( *chr == 15 )
-         escape << "/cr";
+         escape << L"/cr";
       else if ( *chr == 16 )
-         escape << "/cp";
+         escape << L"/cp";
       else if ( *chr == 17 )
-         escape << "/co";
+         escape << L"/co";
       else
-         escape << "/c" << ((int)*chr)-1;
+         escape << L"/c" << ((int)*chr)-1;
 
       insert = chr - (wxUChar*)text.c_str();
       text.replace( insert, 1, escape );

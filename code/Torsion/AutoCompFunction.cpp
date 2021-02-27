@@ -47,7 +47,7 @@ AutoCompFunction::~AutoCompFunction()
 
 wxString AutoCompFunction::GetNamespace() const
 {
-   int sep = m_Name.Find( "::" );
+   int sep = m_Name.Find( L"::" );
    if ( sep == -1 )
       return wxEmptyString;
 
@@ -56,7 +56,7 @@ wxString AutoCompFunction::GetNamespace() const
 
 wxString AutoCompFunction::GetMethodName() const
 {
-   int sep = m_Name.Find( "::" );
+   int sep = m_Name.Find( L"::" );
    if ( sep == -1 )
       return m_Name;
 

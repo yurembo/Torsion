@@ -14,7 +14,7 @@
 ConnectDlg::ConnectDlg( wxWindow* parent, wxSocketClient* server, 
                         wxIPV4address* address, const wxString& password, 
                         bool connectNow )
-   :  wxDialog( (wxWindow*)parent, (wxWindowID)wxID_ANY, wxString( "Connecting" ) ),
+   :  wxDialog( (wxWindow*)parent, (wxWindowID)wxID_ANY, wxString( L"Connecting" ) ),
       m_Server( server ),
       m_Address( address ),
       m_Password( password ),
@@ -40,21 +40,21 @@ void ConnectDlg::OnInitDialog( wxInitDialogEvent& event )
    wxBoxSizer* content = new wxBoxSizer( wxVERTICAL );
 
    // The address
-   content->Add( new wxStaticText( this, wxID_ANY, "&Address:" ) );
+   content->Add( new wxStaticText( this, wxID_ANY, L"&Address:" ) );
    content->AddSpacer( 5 );
    m_AddressCtrl = new wxTextCtrl( this, wxID_ANY, m_Address->IPAddress() );
    content->Add( m_AddressCtrl, 0, wxEXPAND | wxLEFT, 10 );
    content->AddSpacer( 7 );
 
    // The port
-   content->Add( new wxStaticText( this, wxID_ANY, "&Port:" ) );
+   content->Add( new wxStaticText( this, wxID_ANY, L"&Port:" ) );
    content->AddSpacer( 5 );
    m_PortCtrl = new wxTextCtrl( this, wxID_ANY, wxString() << m_Address->Service() );
    content->Add( m_PortCtrl, 0, wxEXPAND | wxLEFT, 10 );
    content->AddSpacer( 7 );
 
    // The port
-   content->Add( new wxStaticText( this, wxID_ANY, "Pass&word:" ) );
+   content->Add( new wxStaticText( this, wxID_ANY, L"Pass&word:" ) );
    content->AddSpacer( 5 );
    m_PasswordCtrl = new wxTextCtrl( this, wxID_ANY, m_Password );
    content->Add( m_PasswordCtrl, 0, wxEXPAND | wxLEFT, 10 );
@@ -66,9 +66,9 @@ void ConnectDlg::OnInitDialog( wxInitDialogEvent& event )
    // the cancel button
    content->AddSpacer( 14 );
    wxBoxSizer* bsizer = new wxBoxSizer( wxHORIZONTAL );
-   bsizer->Add( new wxButton( this, ID_CONNECT, "Connect" ) );
+   bsizer->Add( new wxButton( this, ID_CONNECT, L"Connect" ) );
    bsizer->AddSpacer( 5 );
-   bsizer->Add( new wxButton( this, wxID_CANCEL, "&Cancel" ) );
+   bsizer->Add( new wxButton( this, wxID_CANCEL, L"&Cancel" ) );
    content->Add( bsizer, 0, wxALIGN_CENTER_HORIZONTAL );
 
    // Create a sizer for the borders around the entire
@@ -83,7 +83,7 @@ void ConnectDlg::OnInitDialog( wxInitDialogEvent& event )
 
 void ConnectDlg::OnConnect( wxCommandEvent& event )
 {
-   wxLogDebug( "ConnectDlg::OnConnect!\n" );
+   wxLogDebug( L"ConnectDlg::OnConnect!\n" );
 
    m_Connecting = true;
 
@@ -141,7 +141,7 @@ void ConnectDlg::OnCancel( wxCommandEvent& event )
 
 void ConnectDlg::OnSocketEvent( wxSocketEvent& event )
 {
-   wxLogDebug( "ConnectDlg::OnSocketEvent!\n" );
+   wxLogDebug( L"ConnectDlg::OnSocketEvent!\n" );
 
    wxASSERT( m_Server );
    wxASSERT( m_Server == event.GetSocket() );

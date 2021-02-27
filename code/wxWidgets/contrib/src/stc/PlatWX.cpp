@@ -19,6 +19,8 @@
 #include "wx/stc/stc.h"
 
 
+#include "helper.h"
+
 
 Point Point::FromLong(long lpoint) {
     return Point(lpoint & 0xFFFF, lpoint >> 16);
@@ -740,7 +742,8 @@ void wxSTCListBox::SetList(const char *list,	char separator, char typesep)
    // Take a guess at the final count of items
    // to remove the alloc overheads on Add().
    {
-      size_t count = wxStrlen( list ) / 15; // seems like a good average word size.
+	  size_t count = mbstowcs(nullptr, list, 0);
+      //size_t count = wxStrlen( list ) / 15; // seems like a good average word size.
       m_Items.Alloc( count ); 
       m_Types.Alloc( count );
    }
@@ -763,11 +766,12 @@ void wxSTCListBox::SetList(const char *list,	char separator, char typesep)
             *ptr != separator )
          continue;
 
-      item.assign( startword, ptr-startword );
+	  const wchar_t* w_startword = widen(startword).c_str() ;
+      item.assign( w_startword, ptr-startword );
 
       i = item.Find( typesep );
       if ( i != -1 )
-         type = atoi( item.c_str() + i + 1 );
+		  type = atoi( item.mb_str() + i + 1 );
 
       item.Truncate( i );
 

@@ -52,22 +52,24 @@ protected:
 
 inline bool XmlFile::StringToBool( const wxChar* boolean )
 {
-   return stricmp( boolean, "true" ) == 0 || atoi( boolean );
+   //return stricmp( boolean, "true" ) == 0 || atoi( boolean );
+	return wcscmp( boolean, L"true" ) == 0 || _wtoi( boolean );
 }
 
 inline int XmlFile::StringToInt( const wxChar* integer )
 {
-   return atoi( integer );
+   return _wtoi( integer );
 }
 
 inline wxString XmlFile::BoolToString( bool value )
 {
-   return value ? "true" : "false";
+   return value ? L"true" : L"false";
 }
 
 inline wxString XmlFile::IntToString( int value )
 {
-   return itoa( value, s_Temp, 10 ); 
+   //return itoa( value, s_Temp, 10 ); 
+	return _itow( value, s_Temp, 10 ); 
 }
 
 #endif // TORSION_XMLFILE_H

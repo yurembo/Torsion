@@ -147,9 +147,9 @@ bool ScriptView::OnCreate( wxDocument *doc, long WXUNUSED(flags) )
    // dropdown boxes as well as a toolbar with a few buttons.
    wxBoxSizer* hsizer = new wxBoxSizer(wxHORIZONTAL);
    m_Types = new tsComboBox();
-   m_Types->Create( panel, wxID_HIGHEST, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxSTATIC_BORDER | wxCB_DROPDOWN | wxCB_READONLY );
+   m_Types->Create( panel, wxID_HIGHEST, L"", wxDefaultPosition, wxDefaultSize, 0, NULL, wxSTATIC_BORDER | wxCB_DROPDOWN | wxCB_READONLY );
    m_Members = new tsComboBox();
-   m_Members->Create( panel, wxID_HIGHEST+1, "", wxDefaultPosition, wxDefaultSize, 0, NULL, wxSTATIC_BORDER | wxCB_DROPDOWN | wxCB_READONLY );
+   m_Members->Create( panel, wxID_HIGHEST+1, L"", wxDefaultPosition, wxDefaultSize, 0, NULL, wxSTATIC_BORDER | wxCB_DROPDOWN | wxCB_READONLY );
    /*
    wxToolBar* toolbar = new tsToolBar( panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT|wxTB_HORIZONTAL|wxTB_NODIVIDER|wxNO_BORDER );
    toolbar->SetToolPacking(0);
@@ -245,7 +245,7 @@ void ScriptView::OnUpdateCombos( wxTimerEvent& event )
 
       // Ok... select it.
       wxString func = m_Functions[i];
-      int sep = func.Find( "::" );
+      int sep = func.Find( L"::" );
       if ( sep == -1 )
       {
          if ( m_Types->GetSelection() != 0 )
@@ -309,13 +309,13 @@ void ScriptView::UpdateTypeList()
 
    m_Types->Freeze();
    m_Types->Clear();
-   m_Types->Append( "(Globals)" );
+   m_Types->Append( L"(Globals)" );
 
    for ( int i=0; i < m_Functions.GetCount(); i++ )
    {
       const wxString& func = m_Functions[i];
 
-      int sep = func.Find( "::" );
+      int sep = func.Find( L"::" );
       if ( sep == -1 )
          continue;
 
@@ -355,7 +355,7 @@ void ScriptView::OnUpdateMembers( wxCommandEvent& event )
       {
          const wxString& func = m_Functions[i];
 
-         if ( func.Find( "::" ) == -1 )
+         if ( func.Find( L"::" ) == -1 )
             m_Members->Append( func );
       }
    }
@@ -365,7 +365,7 @@ void ScriptView::OnUpdateMembers( wxCommandEvent& event )
       {
          const wxString& func = m_Functions[i];
 
-         int sep = func.Find( "::" );
+         int sep = func.Find( L"::" );
          if ( sep == -1 )
             continue;
          wxString type = func.Mid( 0, sep );
@@ -393,7 +393,7 @@ void ScriptView::OnSelectMember( wxCommandEvent& event )
    wxString member = m_Members->GetStringSelection();
    wxString function;
    if ( m_Types->GetSelection() > 0 )
-      function = m_Types->GetStringSelection() + "::" + member;
+      function = m_Types->GetStringSelection() + L"::" + member;
    else
       function = member;
 
@@ -913,7 +913,7 @@ void ScriptView::OnOpenWith( wxCommandEvent& event )
 void ScriptView::OnExplore( wxCommandEvent& event )
 {
    wxFileName file( GetDocument()->GetFilename() );
-   tsExecuteVerb( file.GetPath(), "explore" );
+   tsExecuteVerb( file.GetPath(), L"explore" );
 }
 
 void ScriptView::OnCopyFullPath( wxCommandEvent& event )

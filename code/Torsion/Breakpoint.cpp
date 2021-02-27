@@ -30,19 +30,19 @@ bool Breakpoint::operator ==( const Breakpoint& b ) const
 wxString Breakpoint::GetToolTip() const
 {
    wxString tooltip;
-   tooltip << "At " << m_File.GetFullPath() << ", line " << m_Line;
+   tooltip << L"At " << m_File.GetFullPath() << L", line " << m_Line;
 
    if ( !m_Condition.IsEmpty() || m_Pass > 0 )
-      tooltip << ", ";
+      tooltip << L", ";
 
    if ( !m_Condition.IsEmpty() )
-      tooltip << "when '" << m_Condition << "' is true";
+      tooltip << L"when '" << m_Condition << L"' is true";
 
    if ( !m_Condition.IsEmpty() && m_Pass > 0 )
-      tooltip << " ";
+      tooltip << L" ";
 
    if ( m_Pass > 0 )
-      tooltip << "and pass count is equal to " << m_Pass;
+      tooltip << L"and pass count is equal to " << m_Pass;
 
    return tooltip;
 }

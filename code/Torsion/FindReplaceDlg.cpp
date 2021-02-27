@@ -212,7 +212,7 @@ bool FindReplaceDlg::ShowFind( bool show )
 {
    if ( show )
    {
-      SetTitle( "Find" );
+      SetTitle( L"Find" );
       m_WithSizer->Show( (size_t)0, false );
       m_WithSizer->Show( (size_t)1, false );
       m_ButtonSizer->Show( (size_t)1, false );
@@ -230,7 +230,7 @@ bool FindReplaceDlg::ShowReplace( bool show )
 {
    if ( show )
    {
-      SetTitle( "Replace" );
+      SetTitle( L"Replace" );
       m_WithSizer->Show( (size_t)0, true );
       m_WithSizer->Show( (size_t)1, true );
       m_ButtonSizer->Show( (size_t)1, true );

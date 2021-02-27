@@ -22,6 +22,8 @@
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
 
+#include "helper.h"
+
 
 #ifdef _DEBUG 
    #define new DEBUG_NEW 
@@ -32,27 +34,27 @@ WX_DEFINE_OBJARRAY(FileInfoArray);
 
 IMPLEMENT_DYNAMIC_CLASS( ProjectDoc, wxDocument )
 
-const wxString ProjectDoc::sm_SearchURL = "http://tdn.garagegames.com/elixir/search.php";
+const wxString ProjectDoc::sm_SearchURL = L"http://tdn.garagegames.com/elixir/search.php";
 
-const wxString ProjectDoc::sm_DebugHookBegin = "// BEGIN TORSION";
-const wxString ProjectDoc::sm_DebugHookEnd   = "// END TORSION";
-const wxString ProjectDoc::sm_DefaultHook = "dbgSetParameters( #port#, \"#password#\", true );";
+const wxString ProjectDoc::sm_DebugHookBegin = L"// BEGIN TORSION";
+const wxString ProjectDoc::sm_DebugHookEnd   = L"// END TORSION";
+const wxString ProjectDoc::sm_DefaultHook = L"dbgSetParameters( #port#, \"#password#\", true );";
 
 
 ProjectDoc::ProjectDoc()
    :  wxDocument(),
-      m_Name( "Untitled" ),
-      m_Address( "127.0.0.1" ),
+      m_Name( L"Untitled" ),
+      m_Address( L"127.0.0.1" ),
       m_Port( 6060 ),
-      m_Password( "password" ),
-      m_EntryScript( "main.cs" ),
+      m_Password( L"password" ),
+      m_EntryScript( L"main.cs" ),
       m_DebugHook( sm_DefaultHook ),
       m_SearchURL( wxEmptyString ), //sm_SearchURL ),
-      m_SearchProduct( "TGE" ),
-      m_SearchVersion( "HEAD" ),
+      m_SearchProduct( L"TGE" ),
+      m_SearchVersion( L"HEAD" ),
       m_ExecModifiedScripts( true )
 {
-   SetScannerExtsString( "cs;gui" );
+   SetScannerExtsString( L"cs;gui" );
 }
 
 ProjectDoc::~ProjectDoc()
@@ -213,30 +215,30 @@ bool ProjectDoc::OnSaveDocument( const wxString& filename )
    working.MakeRelativeTo( filePath );
 
 	XmlFile Xml;
-	Xml.AddElem( "TorsionProject" );
+	Xml.AddElem( L"TorsionProject" );
 	Xml.IntoElem();
-	Xml.AddElem( "Name", m_Name );
-	Xml.AddElem( "WorkingDir", working.GetFullPath() );
-   Xml.AddElem( "EntryScript", m_EntryScript );
-   Xml.AddElem( "DebugHook", m_DebugHook );   
-   Xml.AddArrayStringElems( "Mods", "Folder", m_Mods );
-   Xml.AddElem( "ScannerExts", GetScannerExtsString() );
+	Xml.AddElem( L"Name", MCD_CSTR(m_Name) );
+	Xml.AddElem( L"WorkingDir", MCD_CSTR(working.GetFullPath()) );
+   Xml.AddElem( L"EntryScript", MCD_CSTR(m_EntryScript) );
+   Xml.AddElem( L"DebugHook", MCD_CSTR(m_DebugHook) );   
+   Xml.AddArrayStringElems( L"Mods", L"Folder", m_Mods );
+   Xml.AddElem( L"ScannerExts", MCD_CSTR(GetScannerExtsString()) );
 
-   Xml.AddElem( "Configs" );
+   Xml.AddElem( L"Configs" );
 	Xml.IntoElem();
    for ( size_t i=0; i < m_Configs.GetCount(); i++ ) {
 
-      Xml.AddElem( "Config" );
+      Xml.AddElem( L"Config" );
 	   Xml.IntoElem();
 
-         Xml.AddElem( "Name", m_Configs[i].GetName() );
+         Xml.AddElem( L"Name", MCD_CSTR(m_Configs[i].GetName()) );
          wxString exe( m_Configs[i].GetRelativeExe( filePath ) );
-         Xml.AddElem( "Executable", exe );
-         Xml.AddElem( "Arguments", m_Configs[i].GetArgs() );
-         Xml.AddBoolElem( "HasExports", m_Configs[i].HasExports() );
-         Xml.AddBoolElem( "Precompile", m_Configs[i].Precompile() );
-         Xml.AddBoolElem( "InjectDebugger", m_Configs[i].InjectDebugger() );
-         Xml.AddBoolElem( "UseSetModPaths", m_Configs[i].UseSetModPaths() );
+         Xml.AddElem( L"Executable", MCD_CSTR(exe) );
+         Xml.AddElem( L"Arguments", MCD_CSTR(m_Configs[i].GetArgs() ));
+         Xml.AddBoolElem( L"HasExports", m_Configs[i].HasExports() );
+         Xml.AddBoolElem( L"Precompile", m_Configs[i].Precompile() );
+         Xml.AddBoolElem( L"InjectDebugger", m_Configs[i].InjectDebugger() );
+         Xml.AddBoolElem( L"UseSetModPaths", m_Configs[i].UseSetModPaths() );
 
       Xml.OutOfElem();
    }
@@ -245,14 +247,14 @@ bool ProjectDoc::OnSaveDocument( const wxString& filename )
    //Xml.AddBoolElem( "OneClickDebugging", m_AllowDebugHook );
    //Xml.AddBoolElem( "Precompile", m_Precompile );
 
-   Xml.AddElem( "SearchURL", m_SearchURL );
-   Xml.AddElem( "SearchProduct", m_SearchProduct );
-   Xml.AddElem( "SearchVersion", m_SearchVersion );
+   Xml.AddElem( MCD_CSTR(L"SearchURL"), MCD_CSTR(m_SearchURL ));
+   Xml.AddElem( MCD_CSTR(L"SearchProduct"), MCD_CSTR(m_SearchProduct) );
+   Xml.AddElem( MCD_CSTR(L"SearchVersion"),MCD_CSTR(m_SearchVersion) );
 
-   Xml.AddBoolElem( "ExecModifiedScripts", m_ExecModifiedScripts );
+   Xml.AddBoolElem( L"ExecModifiedScripts", m_ExecModifiedScripts );
 
    // Store it.
-   std::string Buffer( Xml.GetDoc() );
+   std::string Buffer( convertWStringToString(Xml.GetDoc()));
 	File.Write( Buffer.c_str(), Buffer.length() );
 
    Modify( false );
@@ -283,11 +285,11 @@ bool ProjectDoc::OnOpenDocument( const wxString& filename )
       char* Buffer = new char[ Length+1 ];
 	   File.Read( Buffer, Length );
 	   Buffer[ Length ] = 0;
-      Xml.SetDoc( Buffer );
+      Xml.SetDoc( widen(Buffer) );
 	   delete [] Buffer;
    }
 
-   if ( !Xml.FindElem( "TorsionProject" ) ) 
+   if ( !Xml.FindElem( L"TorsionProject" ) ) 
    {
       wxMessageBox(_("Sorry, this project file is corrupt."), wxTheApp->GetAppName(), wxOK|wxICON_EXCLAMATION,
                         GetDocumentWindow());
@@ -295,38 +297,38 @@ bool ProjectDoc::OnOpenDocument( const wxString& filename )
 	}
 	
 	Xml.IntoElem();
-	Xml.FindElem( "Name" );
+	Xml.FindElem( L"Name" );
 	m_Name = Xml.GetData().c_str();
 	Xml.ResetMainPos();
-	Xml.FindElem( "WorkingDir" );
+	Xml.FindElem( L"WorkingDir" );
    wxFileName working( Xml.GetData().c_str() );
 	working.MakeAbsolute( filePath );
    m_WorkingDir = working.GetFullPath();
 	Xml.ResetMainPos();
-   m_EntryScript = Xml.GetStringElem( "EntryScript", "main.cs" );
-   m_DebugHook = Xml.GetStringElem( "DebugHook", sm_DefaultHook );
+   m_EntryScript = Xml.GetStringElem( L"EntryScript", L"main.cs" );
+   m_DebugHook = Xml.GetStringElem( L"DebugHook", sm_DefaultHook );
 
    m_Mods.Clear();
-   Xml.GetArrayStringElems( m_Mods, "Mods", "Folder" );
+   Xml.GetArrayStringElems( m_Mods, L"Mods", L"Folder" );
 
    m_ScannerExts.Clear();
-   wxString exts = Xml.GetStringElem( "ScannerExts", "cs;gui" );
+   wxString exts = Xml.GetStringElem( L"ScannerExts", L"cs;gui" );
    SetScannerExtsString( exts );
 
-   if ( Xml.FindElem( "Configs" ) ) 
+   if ( Xml.FindElem( L"Configs" ) ) 
    {
       Xml.IntoElem();
 
       m_Configs.Clear();
 
-      while ( Xml.FindElem( "Config" ) && Xml.IntoElem() ) 
+      while ( Xml.FindElem( L"Config" ) && Xml.IntoElem() ) 
       {
          ProjectConfig config;
-	      config.SetName( Xml.GetStringElem( "Name", wxEmptyString ) );
+	      config.SetName( Xml.GetStringElem( L"Name", wxEmptyString ) );
 
          // The executable is either absolute or needs to be made 
          // absolute, relative to the directory of this project file.
-         wxString exe( Xml.GetStringElem( "Executable", wxEmptyString ) );
+         wxString exe( Xml.GetStringElem( L"Executable", wxEmptyString ) );
          {
             wxFileName absolute( exe );
             if ( !absolute.IsAbsolute() )
@@ -337,11 +339,11 @@ bool ProjectDoc::OnOpenDocument( const wxString& filename )
             }
          }
          config.SetExe( exe );
-         config.SetArgs( Xml.GetStringElem( "Arguments", wxEmptyString ) );
-         config.SetExports( Xml.GetBoolElem( "HasExports", true ) );
-         config.SetPrecompile( Xml.GetBoolElem( "Precompile", true ) );
-         config.SetInjectDebugger( Xml.GetBoolElem( "InjectDebugger", true ) );
-         config.SetUseSetModPaths( Xml.GetBoolElem( "UseSetModPaths", false ) );
+         config.SetArgs( Xml.GetStringElem( L"Arguments", wxEmptyString ) );
+         config.SetExports( Xml.GetBoolElem( L"HasExports", true ) );
+         config.SetPrecompile( Xml.GetBoolElem( L"Precompile", true ) );
+         config.SetInjectDebugger( Xml.GetBoolElem( L"InjectDebugger", true ) );
+         config.SetUseSetModPaths( Xml.GetBoolElem( L"UseSetModPaths", false ) );
 
          m_Configs.Add( config );
 
@@ -354,11 +356,11 @@ bool ProjectDoc::OnOpenDocument( const wxString& filename )
    //m_AllowDebugHook = Xml.GetBoolElem( "OneClickDebugging", true );
    //m_Precompile = Xml.GetBoolElem( "Precompile", true );
 
-   m_SearchURL = Xml.GetStringElem( "SearchURL", wxEmptyString ); //sm_SearchURL );
-   m_SearchProduct = Xml.GetStringElem( "SearchProduct", "TGE" );
-   m_SearchVersion = Xml.GetStringElem( "SearchVersion", "HEAD" );
+   m_SearchURL = Xml.GetStringElem( L"SearchURL", wxEmptyString ); //sm_SearchURL );
+   m_SearchProduct = Xml.GetStringElem( L"SearchProduct", L"TGE" );
+   m_SearchVersion = Xml.GetStringElem( L"SearchVersion", L"HEAD" );
 
-   m_ExecModifiedScripts = Xml.GetBoolElem( "ExecModifiedScripts", true );
+   m_ExecModifiedScripts = Xml.GetBoolElem( L"ExecModifiedScripts", true );
 
    SetFilename( filename, true );
    SetTitle( wxFileNameFromPath( filename ) );
@@ -430,7 +432,7 @@ void ProjectDoc::LoadOptions()
 
    // Now load the project state file.
 	wxFile File;
-	if ( !File.Open( GetFilename() + ".opt", wxFile::read ) )
+	if ( !File.Open( GetFilename() + L".opt", wxFile::read ) )
 		return;
 
    XmlFile Xml;
@@ -439,40 +441,40 @@ void ProjectDoc::LoadOptions()
       char* Buffer = new char[ Length+1 ];
 	   File.Read( Buffer, Length );
 	   Buffer[ Length ] = 0;
-      Xml.SetDoc( Buffer );
+      Xml.SetDoc( widen(Buffer) );
 	   delete [] Buffer;
    }
 
-   if ( !Xml.FindElem( "TorsionProjectOptions" ) )
+   if ( !Xml.FindElem( L"TorsionProjectOptions" ) )
 		return;
 
    Xml.IntoElem();
 
-   m_Address = Xml.GetStringElem( "Address", "127.0.0.1" );
-   m_Password = Xml.GetStringElem( "Password", "password" );
-   m_Port = Xml.GetIntElem( "Port", 6060 );
+   m_Address = Xml.GetStringElem( L"Address", L"127.0.0.1" );
+   m_Password = Xml.GetStringElem( L"Password", L"password" );
+   m_Port = Xml.GetIntElem( L"Port", 6060 );
    
-   m_LastConfig = Xml.GetStringElem( "LastConfig", wxEmptyString );
+   m_LastConfig = Xml.GetStringElem( L"LastConfig", wxEmptyString );
 
-   if ( Xml.FindElem( "Breakpoints" ) )
+   if ( Xml.FindElem( L"Breakpoints" ) )
    {
       Xml.IntoElem();
 
-      while ( Xml.FindElem( "Breakpoint" ) && Xml.IntoElem() ) 
+      while ( Xml.FindElem( L"Breakpoint" ) && Xml.IntoElem() ) 
       {
-	      Xml.FindElem( "File" );
+	      Xml.FindElem( L"File" );
 	      wxString File = Xml.GetData().c_str();
 	      Xml.ResetMainPos();
-	      Xml.FindElem( "Line" );
-	      int Line = atoi( Xml.GetData().c_str() );
+	      Xml.FindElem( L"Line" );
+	      int Line = _wtoi( Xml.GetData().c_str() );
 	      Xml.ResetMainPos();
-	      Xml.FindElem( "Pass" );
-	      int Pass = atoi( Xml.GetData().c_str() );
+	      Xml.FindElem( L"Pass" );
+	      int Pass = _wtoi( Xml.GetData().c_str() );
 	      Xml.ResetMainPos();
-	      Xml.FindElem( "Condition" );
+	      Xml.FindElem( L"Condition" );
 	      wxString Condition = Xml.GetData().c_str();
 	      Xml.ResetMainPos();
-         bool Enabled = Xml.FindElem( "Enabled" );
+         bool Enabled = Xml.FindElem( L"Enabled" );
 
          if ( !File.IsEmpty() )
             AddBreakpoint( File, Line, Pass, Condition, Enabled );
@@ -485,17 +487,17 @@ void ProjectDoc::LoadOptions()
 
 	Xml.ResetMainPos();
 
-   if ( Xml.FindElem( "Bookmarks" ) )
+   if ( Xml.FindElem( L"Bookmarks" ) )
    {
       Xml.IntoElem();
 
-      while ( Xml.FindElem( "Bookmark" ) && Xml.IntoElem() ) 
+      while ( Xml.FindElem( L"Bookmark" ) && Xml.IntoElem() ) 
       {
-	      Xml.FindElem( "File" );
+	      Xml.FindElem( L"File" );
 	      wxString File = Xml.GetData().c_str();
 	      Xml.ResetMainPos();
-	      Xml.FindElem( "Line" );
-	      int Line = atoi( Xml.GetData().c_str() );
+	      Xml.FindElem( L"Line" );
+	      int Line = _wtoi( Xml.GetData().c_str() );
 	      Xml.ResetMainPos();
 
          wxString absolutePath = MakeAbsoluteTo( File );
@@ -510,13 +512,13 @@ void ProjectDoc::LoadOptions()
 
 	Xml.ResetMainPos();
 
-   if ( Xml.FindElem( "OpenFiles" ) )
+   if ( Xml.FindElem( L"OpenFiles" ) )
    {
       Xml.IntoElem();
 
       wxASSERT( tsGetMainFrame() );
       ScriptView* activeView = NULL;
-      while ( Xml.FindElem( "File" ) ) 
+      while ( Xml.FindElem( L"File" ) ) 
       {
          wxString File = Xml.GetData().c_str();
 
@@ -527,11 +529,11 @@ void ProjectDoc::LoadOptions()
          ScriptDoc* doc = wxDynamicCast( view->GetDocument(), ScriptDoc );
          if ( doc )
          {
-            wxPoint scroll(   atoi( Xml.GetAttrib( "ScrollX" ).c_str() ),
-                              atoi( Xml.GetAttrib( "ScrollY" ).c_str() ) );
+            wxPoint scroll(   _wtoi( Xml.GetAttrib( L"ScrollX" ).c_str() ),
+                              _wtoi( Xml.GetAttrib( L"ScrollY" ).c_str() ) );
 
             // Store the active view!
-            if ( XmlFile::StringToBool( Xml.GetAttrib( "Active" ).c_str() ) )
+            if ( XmlFile::StringToBool( Xml.GetAttrib( L"Active" ).c_str() ) )
                activeView = view;
 
             doc->SetViewScrollOffset( scroll );
@@ -561,65 +563,65 @@ void ProjectDoc::SaveOptions()
 
    // We use the project name with 'state' appended.
 	wxFile File;
-	if ( !File.Open( GetFilename() + ".opt", wxFile::write ) )
+	if ( !File.Open( GetFilename() + L".opt", wxFile::write ) )
 		return;
 
    // If our open file list is empty then try to fill it!
    if ( m_OpenFiles.IsEmpty() ) 
       UpdateOpenFilesArray();
 
-   char temp[MAX_PATH];
+   wchar_t temp[MAX_PATH];
 
 	CMarkup Xml;
-	Xml.AddElem( "TorsionProjectOptions" );
+	Xml.AddElem( L"TorsionProjectOptions" );
 	Xml.IntoElem();
 
-	Xml.AddElem( "Address", m_Address );
-	Xml.AddElem( "Password", m_Password );
-	Xml.AddElem( "Port", itoa( m_Port, temp, 10 ) );
+	Xml.AddElem( L"Address", MCD_CSTR(m_Address) );
+	Xml.AddElem( L"Password", MCD_CSTR(m_Password) );
+	Xml.AddElem( L"Port", _itow( m_Port, temp, 10 ) );
 
    // Capture what the last selected config is and store it.
    m_LastConfig = tsGetMainFrame()->GetActiveConfigName();
-   Xml.AddElem( "LastConfig", m_LastConfig );
+   Xml.AddElem( L"LastConfig", MCD_CSTR(m_LastConfig) );
 
-   Xml.AddElem( "Breakpoints" );
+   Xml.AddElem( L"Breakpoints" );
 	Xml.IntoElem();
    const BreakpointArray& breakpoints = GetBreakpoints();
    for ( int i = 0; i < breakpoints.GetCount(); i++ ) 
    {
-      Xml.AddElem( "Breakpoint" );
+      Xml.AddElem( L"Breakpoint" );
 	   Xml.IntoElem();
 
          wxASSERT( !wxFileName( breakpoints[i]->GetFile() ).IsAbsolute() );
-         Xml.AddElem( "File", breakpoints[i]->GetFile() );
-         Xml.AddElem( "Line", itoa( breakpoints[i]->GetLine(), temp, 10 ) );
-         Xml.AddElem( "Pass", itoa( breakpoints[i]->GetPass(), temp, 10 ) );
-         Xml.AddElem( "Condition", breakpoints[i]->GetCondition() );
+         Xml.AddElem( L"File", MCD_CSTR(breakpoints[i]->GetFile()) );
+         Xml.AddElem( L"Line", _itow( breakpoints[i]->GetLine(), temp, 10 ) );
+         Xml.AddElem( L"Pass", _itow( breakpoints[i]->GetPass(), temp, 10 ) );
+         Xml.AddElem( L"Condition", MCD_CSTR(breakpoints[i]->GetCondition()) );
 
          if ( breakpoints[i]->GetEnabled() )
-            Xml.AddElem( "Enabled" );
+            Xml.AddElem( L"Enabled" );
 
       Xml.OutOfElem();
    }
    Xml.OutOfElem();
 
-   Xml.AddElem( "Bookmarks" );
+   Xml.AddElem( L"Bookmarks" );
 	Xml.IntoElem();
    const BookmarkArray& bookmarks = GetBookmarks();
    for ( int i = 0; i < bookmarks.GetCount(); i++ ) 
    {
-      Xml.AddElem( "Bookmark" );
+      Xml.AddElem( L"Bookmark" );
 	   Xml.IntoElem();
 
          wxASSERT( !wxFileName( bookmarks[i]->GetFile() ).IsAbsolute() );
-         Xml.AddElem( "File", bookmarks[i]->GetFile() );
-         Xml.AddElem( "Line", itoa( bookmarks[i]->GetLine(), temp, 10 ) );
+         Xml.AddElem( L"File", MCD_CSTR(bookmarks[i]->GetFile()) );
+         Xml.AddElem( L"Line", _itow( bookmarks[i]->GetLine(), temp, 10 ) );
 
       Xml.OutOfElem();
    }
    Xml.OutOfElem();
 
-   Xml.AddElem( "OpenFiles" );
+   Xml.AddElem( L"OpenFiles" );
 	Xml.IntoElem();
 
    // The open files array is sorted by the creation
@@ -628,17 +630,17 @@ void ProjectDoc::SaveOptions()
    {
       wxString File = m_OpenFiles[i].Name;
       wxASSERT( !File.IsEmpty() && wxFileName( File ).IsAbsolute() );
-      Xml.AddElem( "File", MakeReleativeTo( File ) );
-      Xml.AddAttrib( "ScrollX", itoa( m_OpenFiles[i].Offset.x, temp, 10 ) );
-      Xml.AddAttrib( "ScrollY", itoa( m_OpenFiles[i].Offset.y, temp, 10 ) );
+      Xml.AddElem( L"File", MCD_CSTR(MakeReleativeTo( File ) ));
+      Xml.AddAttrib( L"ScrollX", _itow( m_OpenFiles[i].Offset.x, temp, 10 ) );
+      Xml.AddAttrib( L"ScrollY", _itow( m_OpenFiles[i].Offset.y, temp, 10 ) );
       if ( m_ActiveOpenFile == i )
-         Xml.AddAttrib( "Active", "true" );
+         Xml.AddAttrib( L"Active", L"true" );
    }
 
    m_OpenFiles.Clear();
    Xml.OutOfElem();
 
-   std::string Buffer( Xml.GetDoc() );
+   std::string Buffer(convertWStringToString( Xml.GetDoc()) );
 	File.Write( Buffer.c_str(), Buffer.length() );
 }
 
@@ -651,7 +653,7 @@ void ProjectDoc::BuildExportsDB() const
    if ( HasExports() )
    {
       wxFileName exportScript( wxGetApp().GetAppPath() );
-      exportScript.SetFullName( "torsion_exports.cs" );
+      exportScript.SetFullName( L"torsion_exports.cs" );
 
       wxASSERT( tsGetMainFrame() );
 
@@ -697,7 +699,7 @@ wxString ProjectDoc::GetExportsFilePath() const
    exports.AssignDir( GetWorkingDir() );
    wxASSERT( !GetFilename().IsEmpty() );
    wxFileName docName( GetFilename() );
-   exports.SetFullName( docName.GetFullName() + ".exports" );
+   exports.SetFullName( docName.GetFullName() + L".exports" );
 
    return exports.GetFullPath();
 }
@@ -752,7 +754,7 @@ void ProjectDoc::SetModsString( const wxString& modsString )
 {
    // Scan thru the string... use ; and , as seperators.
    wxArrayString mods;
-   wxStringTokenizer toker( modsString, ";," );
+   wxStringTokenizer toker( modsString, L";," );
    while ( toker.HasMoreTokens() )
    {
       wxString mod = toker.GetNextToken();
@@ -769,7 +771,7 @@ wxString ProjectDoc::GetModsString() const
    wxString mods;
 
    for ( int i=0; i < m_Mods.GetCount(); i++ )
-      mods << m_Mods[i] << "; ";
+      mods << m_Mods[i] << L"; ";
 
    mods.RemoveLast();
    return mods;
@@ -806,7 +808,7 @@ bool ProjectDoc::IsMod( const wxString& mod ) const
 wxString ProjectDoc::GetModPath( const wxString& FullPath ) const
 {
    wxFileName Path( FullPath );
-   Path.SetFullName( "" );
+   Path.SetFullName( L"" );
 
    const wxFileName projectDir = wxFileName::DirName( GetWorkingDir() );
 
@@ -814,7 +816,7 @@ wxString ProjectDoc::GetModPath( const wxString& FullPath ) const
    do {
 
       if ( Path.GetDirCount() < 2 )
-         return "";
+         return L"";
 
       ModFolder = Path.GetDirs().Last();
       Path.RemoveLastDir();
@@ -831,7 +833,7 @@ void ProjectDoc::SetScannerExtsString( const wxString& extensions )
 {
    // Scan thru the string... use ; and , as seperators.
    wxArrayString exts;
-   wxStringTokenizer toker( extensions, ";," );
+   wxStringTokenizer toker( extensions, L";," );
    while ( toker.HasMoreTokens() )
    {
       wxString ext = toker.GetNextToken();
@@ -866,7 +868,7 @@ wxString ProjectDoc::GetScannerExtsString() const
    wxString exts;
 
    for ( int i=0; i < m_ScannerExts.GetCount(); i++ )
-      exts << m_ScannerExts[i] << "; ";
+      exts << m_ScannerExts[i] << L"; ";
    
    exts.RemoveLast(2);
    return exts;
@@ -935,7 +937,7 @@ const wxString ProjectDoc::GetExecuteCommand( const wxString& config, bool withA
       return wxEmptyString;
 
    const wxString& args = configPtr->GetArgs();
-   return configPtr->GetExe() + ( withArgs && !args.IsEmpty() ? " " + configPtr->GetArgs() : "" );
+   return configPtr->GetExe() + ( withArgs && !args.IsEmpty() ? L" " + configPtr->GetArgs() : L"" );
 }
 
 const ProjectConfig* ProjectDoc::GetConfig( const wxString& config ) const
@@ -1153,7 +1155,7 @@ bool ProjectDoc::ToggleBreakpoint( const wxString& File, int Line, bool Disable 
 	}
 
 	// Add one if it doesn't exist!
-	AddBreakpoint( RelativePath, Line, 0, "" );
+	AddBreakpoint( RelativePath, Line, 0, L"" );
 	return true;
 }
 
@@ -1334,8 +1336,8 @@ bool ProjectDoc::SetDebugHook( int port, wxString& password )
    wxString portString;
    portString << port;
    wxString line( m_DebugHook );
-   line.Replace( "#port#", portString );
-   line.Replace( "#password#", password );
+   line.Replace( L"#port#", portString );
+   line.Replace( L"#password#", password );
    file.InsertLine( line, 1 );
    file.InsertLine( sm_DebugHookEnd, 2);
    const int bump = 3;
@@ -1498,12 +1500,12 @@ wxString ProjectDoc::GetSearchUrl( const wxString& name ) const
    if ( m_SearchURL.IsEmpty() )
       return wxEmptyString;
 
-   wxString url = m_SearchURL + "?docType=script";
-   wxString product = m_SearchProduct.IsEmpty() ? "TGE" : m_SearchProduct;
-   wxString version = m_SearchVersion.IsEmpty() ? "HEAD" : m_SearchVersion;
-   url << "&product=" << product;
-   url << "&version=" << version;
-   url << "&name=" << name;
+   wxString url = m_SearchURL + L"?docType=script";
+   wxString product = m_SearchProduct.IsEmpty() ? L"TGE" : m_SearchProduct;
+   wxString version = m_SearchVersion.IsEmpty() ? L"HEAD" : m_SearchVersion;
+   url << L"&product=" << product;
+   url << L"&version=" << version;
+   url << L"&name=" << name;
    return url;
 }
 

@@ -124,7 +124,7 @@ class CodeBrowserCtrl : public wxTreeCtrl
       {
          wxASSERT( sid );
          *sid = parentSid;
-         *sid << name << "?" << (int)type;
+         *sid << name << L"?" << (int)type;
          sid->MakeLower();
       }
 

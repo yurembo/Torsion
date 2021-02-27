@@ -492,7 +492,7 @@ bool ProjectCtrl::RefreshFolder( wxTreeItemId item )
    // If we have no children then clear the children flag!
    if ( GetChildrenCount( item, false ) < 1 )
    {
-      AppendItem( item, "dummy", 0, 0, NULL );
+      AppendItem( item, L"dummy", 0, 0, NULL );
       Collapse( item );
       DeleteChildren( item );
       SetItemHasChildren( item, false );
@@ -507,7 +507,7 @@ void ProjectCtrl::FixupFolders( wxTreeItemId item )
    if ( IsExpanded( item ) && !hasChildren )
    {
       // First add a dummy child... else we cannot collapse!
-      AppendItem( item, "dummy", 0, 0, NULL );
+      AppendItem( item, L"dummy", 0, 0, NULL );
       Collapse( item );
       DeleteChildren( item );
       SetItemHasChildren( item, true );
@@ -1163,7 +1163,7 @@ void ProjectCtrl::NewFolder( wxTreeItemId item )
    do
    {
       wxString name;
-      name << "NewFolder" << i++;
+      name << L"NewFolder" << i++;
       folder.AssignDir( parent.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ) + name );
 
    } while ( folder.DirExists() );
@@ -1171,7 +1171,7 @@ void ProjectCtrl::NewFolder( wxTreeItemId item )
    // Create the folder.
    if ( !wxMkdir( folder.GetFullPath() ) )
    {
-      wxMessageDialog dlg( this, "The folder could not be created!", "Torsion", wxOK | wxICON_ERROR );
+      wxMessageDialog dlg( this, L"The folder could not be created!", L"Torsion", wxOK | wxICON_ERROR );
       dlg.ShowModal();
       return;
    }
@@ -1192,7 +1192,7 @@ void ProjectCtrl::NewFile( wxTreeItemId item )
    do
    {
       wxString name;
-      name << parent.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ) << "NewScript" << i++ << "." << ext;
+      name << parent.GetPath( wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR ) << L"NewScript" << i++ << L"." << ext;
       file.Assign( name );
 
    } while ( file.FileExists() );
@@ -1201,7 +1201,7 @@ void ProjectCtrl::NewFile( wxTreeItemId item )
    wxFile dummy( file.GetFullPath(), wxFile::write_excl );
    if ( !dummy.IsOpened() )
    {
-      wxMessageDialog dlg( this, "The file could not be created!", "Torsion", wxOK | wxICON_ERROR );
+      wxMessageDialog dlg( this, L"The file could not be created!", L"Torsion", wxOK | wxICON_ERROR );
       dlg.ShowModal();
       return;
    }

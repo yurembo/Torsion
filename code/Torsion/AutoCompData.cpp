@@ -15,15 +15,15 @@
 #endif 
 
 
-const char* AutoCompData::IDENT_VAR             = "?0";
-const char* AutoCompData::IDENT_FUNCTION        = "?1";
-const char* AutoCompData::IDENT_CLASS           = "?2";
-const char* AutoCompData::IDENT_DATABLOCK       = "?3";
-const char* AutoCompData::IDENT_OBJECT          = "?4";
-const char* AutoCompData::ITYPE_DATABLOCKOBJECT = "?5";
-const char* AutoCompData::IDENT_NAMESPACE       = "?6";
-const char* AutoCompData::ITYPE_PACKAGE         = "?7";
-const char* AutoCompData::ITYPE_KEYWORD         = "?8";
+const wchar_t* AutoCompData::IDENT_VAR             = L"?0";
+const wchar_t* AutoCompData::IDENT_FUNCTION        = L"?1";
+const wchar_t* AutoCompData::IDENT_CLASS           = L"?2";
+const wchar_t* AutoCompData::IDENT_DATABLOCK       = L"?3";
+const wchar_t* AutoCompData::IDENT_OBJECT          = L"?4";
+const wchar_t* AutoCompData::ITYPE_DATABLOCKOBJECT = L"?5";
+const wchar_t* AutoCompData::IDENT_NAMESPACE       = L"?6";
+const wchar_t* AutoCompData::ITYPE_PACKAGE         = L"?7";
+const wchar_t* AutoCompData::ITYPE_KEYWORD         = L"?8";
 
 
 AutoCompData::AutoCompData()
@@ -234,26 +234,26 @@ void AutoCompData::Build( const AutoCompPageArray& files, AutoCompExports* expor
    }
 
    // Add in the reserved words.
-   m_TempArray.Add( "break?8" );
-   m_TempArray.Add( "case?8" );
-   m_TempArray.Add( "continue?8" );
-   m_TempArray.Add( "datablock?8" );
-   m_TempArray.Add( "default?8" );
-   m_TempArray.Add( "else?8" );
-   m_TempArray.Add( "false?8" );
-   m_TempArray.Add( "for?8" );
-   m_TempArray.Add( "function?8" );
-   m_TempArray.Add( "if?8" );
-   m_TempArray.Add( "local?8" );   
-   m_TempArray.Add( "new?8" );
-   m_TempArray.Add( "or?8" );
-   m_TempArray.Add( "package?8" );
-   m_TempArray.Add( "return?8" );
-   m_TempArray.Add( "singleton?8" );  
-   m_TempArray.Add( "switch?8" );
-   m_TempArray.Add( "switch$?8" );
-   m_TempArray.Add( "true?8" );
-   m_TempArray.Add( "while?8" );
+   m_TempArray.Add( L"break?8" );
+   m_TempArray.Add( L"case?8" );
+   m_TempArray.Add( L"continue?8" );
+   m_TempArray.Add( L"datablock?8" );
+   m_TempArray.Add( L"default?8" );
+   m_TempArray.Add( L"else?8" );
+   m_TempArray.Add( L"false?8" );
+   m_TempArray.Add( L"for?8" );
+   m_TempArray.Add( L"function?8" );
+   m_TempArray.Add( L"if?8" );
+   m_TempArray.Add( L"local?8" );   
+   m_TempArray.Add( L"new?8" );
+   m_TempArray.Add( L"or?8" );
+   m_TempArray.Add( L"package?8" );
+   m_TempArray.Add( L"return?8" );
+   m_TempArray.Add( L"singleton?8" );  
+   m_TempArray.Add( L"switch?8" );
+   m_TempArray.Add( L"switch$?8" );
+   m_TempArray.Add( L"true?8" );
+   m_TempArray.Add( L"while?8" );
 
    BuildString( m_TempArray, &m_CompList, &m_CompIndex );
 }
@@ -622,7 +622,7 @@ void AutoCompData::GetCallTip( const wxString& name, CallTipInfo& tip ) const
    }
 
    wxString object, member;
-   if ( name.Find( "::" ) != -1 )
+   if ( name.Find( L"::" ) != -1 )
    {
       object = name.BeforeFirst( ':' );
       member = name.AfterFirst( ':' );
@@ -656,9 +656,9 @@ void AutoCompData::GetCallTip( const wxString& name, CallTipInfo& tip ) const
 
       wxString decl;
       if ( class_->IsDatablock() )
-         decl << "datablock " << class_->GetName();
+         decl << L"datablock " << class_->GetName();
       else
-         decl << "class " << class_->GetName();
+         decl << L"class " << class_->GetName();
 
       tip.SetTip( decl, class_->GetDesc() );
       return;
@@ -683,11 +683,11 @@ void AutoCompData::GetCallTip( const wxString& name, CallTipInfo& tip ) const
 
       wxString decl;
       if ( class_->IsNamespace() )
-         decl << "namespace " << class_->GetName();
+         decl << L"namespace " << class_->GetName();
       else if ( class_->IsDatablock() )
-         decl << "datablock " << class_->GetBase() << "( " << class_->GetName() << " )";
+         decl << L"datablock " << class_->GetBase() << L"( " << class_->GetName() << L" )";
       else
-         decl << "object " << class_->GetBase() << "( " << class_->GetName() << " )";
+         decl << L"object " << class_->GetBase() << L"( " << class_->GetName() << L" )";
 
       tip.SetTip( decl, class_->GetDesc() );
       return;
@@ -697,12 +697,12 @@ void AutoCompData::GetCallTip( const wxString& name, CallTipInfo& tip ) const
    if ( func ) 
    {
       wxString decl;
-      decl << "function " << func->GetName();
+      decl << L"function " << func->GetName();
 
       if ( !func->GetArgs().IsEmpty() )
-         decl << "( " << func->GetArgs() << " )";
+         decl << L"( " << func->GetArgs() << L" )";
       else
-         decl << "()";
+         decl << L"()";
 
       tip.SetTip( decl, func->GetDesc() );
       return;
@@ -731,7 +731,7 @@ bool AutoCompData::GetDefinitionFileAndLine( const wxString& name, wxArrayString
 
    // Look for object names.
    wxString object, member;
-   if ( name.Find( "::" ) != -1 )
+   if ( name.Find( L"::" ) != -1 )
    {
       object = name.BeforeFirst( ':' );
       member = name.AfterFirst( ':' );

@@ -85,7 +85,7 @@ bool BreakpointPropertyDlg::Create( wxWindow* parent, Breakpoint* bp )
     SetExtraStyle(GetExtraStyle()|wxWS_EX_BLOCK_EVENTS);
     wxDialog::Create( parent, 
        SYMBOL_BREAKPOINTPROPERTYDLG_IDNAME, 
-       m_Breakpoint->GetFile().IsEmpty() ? "New Breakpoint" : SYMBOL_BREAKPOINTPROPERTYDLG_TITLE, 
+       m_Breakpoint->GetFile().IsEmpty() ? L"New Breakpoint" : SYMBOL_BREAKPOINTPROPERTYDLG_TITLE, 
        SYMBOL_BREAKPOINTPROPERTYDLG_POSITION,
        SYMBOL_BREAKPOINTPROPERTYDLG_SIZE, 
        SYMBOL_BREAKPOINTPROPERTYDLG_STYLE );
@@ -261,7 +261,7 @@ void BreakpointPropertyDlg::OnBrowseClick( wxCommandEvent& event )
    wxASSERT( tsGetMainFrame() );
    wxDocManager* docMan = tsGetMainFrame()->GetDocumentManager();
    wxASSERT( docMan );
-   wxDocTemplate* doctemp = docMan->FindTemplateForPath( "dummy.cs" );
+   wxDocTemplate* doctemp = docMan->FindTemplateForPath( L"dummy.cs" );
    wxASSERT( doctemp );
    wxString fileFilter;
    fileFilter << doctemp->GetDescription()
@@ -273,7 +273,7 @@ void BreakpointPropertyDlg::OnBrowseClick( wxCommandEvent& event )
    wxFileName file( project->MakeAbsoluteTo( m_File->GetLabel() ) );
 
 
-   wxFileDialog dlg( this, "Select A TorqueScript", file.GetPath(), file.GetFullName(), fileFilter, wxOPEN | wxFILE_MUST_EXIST );
+   wxFileDialog dlg( this, L"Select A TorqueScript", file.GetPath(), file.GetFullName(), fileFilter, wxOPEN | wxFILE_MUST_EXIST );
    if ( dlg.ShowModal() == wxID_OK ) {
 
       m_File->SetLabel( project->MakeReleativeTo( dlg.GetPath() ) );

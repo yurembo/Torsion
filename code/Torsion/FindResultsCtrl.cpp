@@ -65,7 +65,7 @@ FindResultsCtrl::FindResultsCtrl( wxWindow* parent, wxWindowID id, FindThread* f
    StyleClearAll();
 
    // TODO: Make the font style a configuration option or use some OS default!
-   wxFont* font = wxTheFontList->FindOrCreateFont( 8, wxDEFAULT, wxNORMAL, wxNORMAL, false, "Courier New" );
+   wxFont* font = wxTheFontList->FindOrCreateFont( 8, wxDEFAULT, wxNORMAL, wxNORMAL, false, L"Courier New" );
    for ( int i = 0; i < wxSTC_STYLE_LASTPREDEFINED; i++ )
       StyleSetFont( i, *font );
 
@@ -184,7 +184,7 @@ void FindResultsCtrl::ActivateLine( int line, bool openFile )
    {
       // TODO: This possibly needs fixing for non Win32 platforms.
       wxString fmt;
-      fmt << "([A-Z][:][^" << wxFileName::GetForbiddenChars() << "]*)[(]([0-9]*)[):]";
+      fmt << L"([A-Z][:][^" << wxFileName::GetForbiddenChars() << L"]*)[(]([0-9]*)[):]";
       wxRegEx expr( fmt, wxRE_ADVANCED | wxRE_ICASE );
       wxASSERT( expr.IsValid() );
       wxString Text = GetLine( line );

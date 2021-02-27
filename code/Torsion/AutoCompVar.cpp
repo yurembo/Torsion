@@ -87,7 +87,7 @@ int AutoCompVar::FindScoped( const wxString& name, const AutoCompVarArray& sourc
       hi = source.GetCount();
    int res;
 
-   wxString scoped = name + "::";
+   wxString scoped = name + L"::";
    const size_t len = scoped.Len();
 
    while ( lo < hi ) {

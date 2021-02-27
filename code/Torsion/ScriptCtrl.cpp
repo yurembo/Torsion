@@ -26,6 +26,8 @@
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 
+#include "helper.h"
+
 #ifdef _DEBUG 
    #define new DEBUG_NEW 
 #endif 
@@ -35,11 +37,11 @@ extern wxMenu *wxCurrentPopupMenu;
 // TODO: fooopsSß is a valid C++ identifier... is it valid TorqueScript?
 // Investigate and add latin characters to Torsion.
 
-const wxString ScriptCtrl::sm_WordChars(  "abcdefghijklmnopqrstuvwxyz"
-                                          "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                          "0123456789"
-                                          "_$%"
-                                          "" );
+const wxString ScriptCtrl::sm_WordChars(  L"abcdefghijklmnopqrstuvwxyz"
+                                          L"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                          L"0123456789"
+                                          L"_$%"
+                                          L"" );
 
 
 ScriptCtrl::ScriptCtrl()
@@ -176,7 +178,7 @@ bool ScriptCtrl::LoadFile( const wxString& filename )
    if ( TextBuffer )
    {
       TextBuffer->Lock();
-      GetTextRangeRaw( TextBuffer->GetWriteBuf( GetTextLength() ), 0, -1 );
+	  GetTextRangeRaw( _strdup(narrow(TextBuffer->GetWriteBuf( GetTextLength())).c_str()), 0, -1 );
       TextBuffer->Unlock();
    }
 
@@ -278,7 +280,7 @@ bool ScriptCtrl::SaveFile( const wxString& filename )
    if ( TextBuffer )
    {
       TextBuffer->Lock();
-      GetTextRangeRaw( TextBuffer->GetWriteBuf( GetTextLength() ), 0, -1 );
+	  GetTextRangeRaw( _strdup(narrow(TextBuffer->GetWriteBuf( GetTextLength() )).c_str()), 0, -1 );
       TextBuffer->Unlock();
    }
 
@@ -349,10 +351,10 @@ bool ScriptCtrl::InitializePrefs()
    // Setup code folding.
    StyleSetChangeable( wxSTC_TCS_FOLDED, false );
    IndicatorSetStyle( 2, wxSTC_INDIC_BOX );
-   SetProperty( "fold.comment", "1" );
-   SetProperty( "fold.at.else", "1" );
-   SetProperty( "fold.compact", "0" ); // NOT SUPPORTED!
-   SetProperty( "fold.preprocessor", "0" ); // NOT SUPPORTED!
+   SetProperty( L"fold.comment", L"1" );
+   SetProperty( L"fold.at.else", L"1" );
+   SetProperty( L"fold.compact", L"0" ); // NOT SUPPORTED!
+   SetProperty( L"fold.preprocessor", L"0" ); // NOT SUPPORTED!
    
    SetFoldFlags( 0x0020 ); // 64 ... for debugging folding levels // 
    SetMarginType( MARGIN_FOLDING, wxSTC_MARGIN_SYMBOL );
@@ -485,22 +487,22 @@ void ScriptCtrl::OnUpdateUI( wxStyledTextEvent& event )
 
       int Pos = GetCurrentPos();
       wxString Text;
-      Text << "Ln " << ( LineFromPosition( Pos ) + 1 );
+      Text << L"Ln " << ( LineFromPosition( Pos ) + 1 );
       bar->SetStatusText( Text, tsSTATUS_LINE );
       Text.Clear();
-      Text << "Col " << ( GetColumn( Pos ) + 1 );
+      Text << L"Col " << ( GetColumn( Pos ) + 1 );
       bar->SetStatusText( Text, tsSTATUS_COL );
       Text.Clear();
-      Text << "Off " << Pos;
+      Text << L"Off " << Pos;
       bar->SetStatusText( Text, tsSTATUS_OFFSET );
       Text.Clear();
-      Text << "Chr " << GetCharAt( Pos ) ;
+      Text << L"Chr " << GetCharAt( Pos ) ;
       bar->SetStatusText( Text, tsSTATUS_CHAR );
 
       if ( !GetOvertype() ) 
-         bar->SetStatusText( "INS", tsSTATUS_OVERWRITE );
+         bar->SetStatusText( L"INS", tsSTATUS_OVERWRITE );
       else
-         bar->SetStatusText( "OVR", tsSTATUS_OVERWRITE );
+         bar->SetStatusText( L"OVR", tsSTATUS_OVERWRITE );
 
       bar->Thaw();
    }
@@ -928,7 +930,7 @@ bool ScriptCtrl::ListMembers( bool forced )
       m_IsGlobalFullups = false;
    }
 
-   if ( ( currWord.Len() > 0 || forced ) && prevWord == "datablock" ) 
+   if ( ( currWord.Len() > 0 || forced ) && prevWord == L"datablock" ) 
    {
       const AutoCompData* data = tsGetAutoComp()->Lock();
 
@@ -940,7 +942,7 @@ bool ScriptCtrl::ListMembers( bool forced )
       tsGetAutoComp()->Unlock();
    }
    else if ( ( currWord.Len() > 0 || forced ) && 
-      ( prevWord == "new" || prevWord == "singleton" ) ) 
+      ( prevWord == L"new" || prevWord == L"singleton" ) ) 
    {
       const AutoCompData* data = tsGetAutoComp()->Lock();
 
@@ -968,12 +970,12 @@ bool ScriptCtrl::ListMembers( bool forced )
    */
 
    // Look for a class, datablock, or namespace member expansion.
-   else if ( !prevWord.IsEmpty() && ( sep == "::" || sep == "." ) )
+   else if ( !prevWord.IsEmpty() && ( sep == L"::" || sep == L"." ) )
    {
       const AutoCompData* data = tsGetAutoComp()->Lock();
 
       wxString list;
-      if ( prevWord.CmpNoCase( "%this" ) == 0 )
+      if ( prevWord.CmpNoCase( L"%this" ) == 0 )
       {
          // Figure out what type %this is.
          wxString funcName = data->GetFunctionNameAt( filePath, line-1 );
@@ -1230,7 +1232,7 @@ bool ScriptCtrl::ParameterInfo( bool forced )
       const AutoCompData* data = tsGetAutoComp()->Lock();
 
       wxString list;
-      if ( prevWord.CmpNoCase( "%this" ) == 0 )
+      if ( prevWord.CmpNoCase( L"%this" ) == 0 )
       {
          // Figure out what type %this is.
          wxString funcName = data->GetFunctionNameAt( filePath, line-1 );
@@ -1239,7 +1241,7 @@ bool ScriptCtrl::ParameterInfo( bool forced )
 
       // Build the function string.
       wxString func;
-      if ( sep == "::" || sep == "." )
+      if ( sep == L"::" || sep == L"." )
          func << prevWord << '.' << currWord;
       else
          func << currWord;
@@ -1256,7 +1258,7 @@ bool ScriptCtrl::ParameterInfo( bool forced )
       // If we got a dot seperator then we need to
       // remove the first parameter... it should
       // always be %this.
-      if ( sep == "." )
+      if ( sep == L"." )
          calltip.RemoveThis();
 
       // Show it.
@@ -1396,7 +1398,7 @@ wxString ScriptCtrl::GetIdentifierAt( int pos, bool* isFunction )
       int nend = start;
       int nstart = WordStartPosition( nend, false );
       wxString prev = GetTextRange( nstart, nend );
-      if ( prev != '.' && prev != "::" )
+      if ( prev != '.' && prev != L"::" )
          break;
 
       int nend2 = nstart - prev.Len();
@@ -1419,10 +1421,10 @@ wxString ScriptCtrl::GetIdentifierAt( int pos, bool* isFunction )
       if ( next[0] == '(' && isFunction )
          *isFunction = true;
 
-      if ( /*next != '.' &&*/ next != "::" )
+      if ( /*next != '.' &&*/ next != L"::" )
          break;
 
-      if ( word[0] != '$' && word[0] != '%' && (next == "::" || next == ".") )
+      if ( word[0] != '$' && word[0] != '%' && (next == L"::" || next == L".") )
          break;
 
       int nstart2 = nend + next.Len();
@@ -1535,15 +1537,15 @@ void ScriptCtrl::OnHoverStart( wxStyledTextEvent& event )
       const AutoCompData* data = tsGetAutoComp()->Lock();
 
       // Convert %this to a concrete type.
-      if ( word == "%this" || word.StartsWith( "%this." ) )
+      if ( word == L"%this" || word.StartsWith( L"%this." ) )
       {
          wxString funcName = data->GetFunctionNameAt( m_FilePath, curline );
          wxString objectName = funcName.BeforeFirst( ':' );
 
-         if ( word == "%this" )
+         if ( word == L"%this" )
             word = objectName;
          else
-            word = objectName + "::" + word.AfterFirst( '.' );
+            word = objectName + L"::" + word.AfterFirst( '.' );
       }
 
       CallTipInfo calltip;
@@ -1570,7 +1572,7 @@ void ScriptCtrl::OnHoverStart( wxStyledTextEvent& event )
 
       calltip = CallTipInfo::FormatTip( calltip, 3 );
       if ( lines == 10 )
-         calltip << "...";
+         calltip << L"...";
 
       if ( !calltip.IsEmpty() )
          CallTipShow( m_LastCallTipPos, calltip );
@@ -1584,7 +1586,7 @@ void ScriptCtrl::OnDebugCallTip( const wxString& Expression, const wxString& Val
    CallTipCancel();
 
    wxString calltip;
-   calltip << Expression << " = " << Value;
+   calltip << Expression << L" = " << Value;
 
    if ( calltip.IsEmpty() )
       return;
@@ -1657,13 +1659,13 @@ void ScriptCtrl::OnUpdateEnable( wxUpdateUIEvent& event )
 
 void ScriptCtrl::OnGoto( wxCommandEvent& event )
 {
-   wxDialog* GotoDlg = new wxDialog( tsGetMainFrame(), wxID_ANY, "Go To Line", wxDefaultPosition );
+   wxDialog* GotoDlg = new wxDialog( tsGetMainFrame(), wxID_ANY, L"Go To Line", wxDefaultPosition );
    wxBoxSizer* sizer = new wxBoxSizer( wxVERTICAL );
 
    sizer->AddSpacer( 7 );
 
    wxString label;
-   label << "&Line number ( 1 - " << GetLineCount() << " ):";
+   label << L"&Line number ( 1 - " << GetLineCount() << L" ):";
    sizer->Add( new wxStaticText( GotoDlg, wxID_ANY, label, wxDefaultPosition, wxSize( 225, -1 ) ), 0, wxLEFT | wxRIGHT | wxEXPAND | wxALIGN_TOP, 7 );
 
    sizer->AddSpacer( 7 );
@@ -1792,7 +1794,7 @@ void ScriptCtrl::OnKeyDown( wxKeyEvent& event )
       if ( GetLastNonWhitespaceChar( pos ) == '{' ) 
       {
          if ( GetUseTabs() )
-            indent << "\t";
+            indent << L"\t";
          else
             indent << wxString( _T(' '), GetTabWidth() );
       }
@@ -1980,7 +1982,7 @@ void ScriptCtrl::OnFoldingUpdateUI( wxUpdateUIEvent& event )
    switch ( event.GetId() ) {
 
       case tsID_FOLDING_TOGGLEBLOCK:
-         event.SetText( ( parent != -1 || header ) && expanded ? "Collapse Block" : "Expand Block" );
+         event.SetText( ( parent != -1 || header ) && expanded ? L"Collapse Block" : L"Expand Block" );
          event.Enable( parent != -1 || header );
          break;
 
@@ -2006,7 +2008,7 @@ void ScriptCtrl::OnFoldingUpdateUI( wxUpdateUIEvent& event )
             }
          }
 
-         event.SetText( children && expanded ? "Collapse Children" : "Expand Children" );
+         event.SetText( children && expanded ? L"Collapse Children" : L"Expand Children" );
          event.Enable( children );
          break;
       }
@@ -2032,7 +2034,7 @@ void ScriptCtrl::OnFoldingUpdateUI( wxUpdateUIEvent& event )
             }
          }
 
-         event.SetText( children && expanded ? "Collapse All" : "Expand All" );
+         event.SetText( children && expanded ? L"Collapse All" : L"Expand All" );
          event.Enable( children );
          break;
       }
@@ -2059,7 +2061,7 @@ void ScriptCtrl::OnFoldingUpdateUI( wxUpdateUIEvent& event )
             }
          }
 
-         event.SetText( children && expanded ? "Collapse Definitions" : "Expand Definitions" );
+         event.SetText( children && expanded ? L"Collapse Definitions" : L"Expand Definitions" );
          event.Enable( children );
          break;
       }
@@ -2294,13 +2296,13 @@ void ScriptCtrl::OnFindNext( wxFindDialogEvent& event )
 
       if ( found == m_StartFindPos )
       {
-         tsGetMainFrame()->SetStatusText( "Find reached starting point of the search." );
+         tsGetMainFrame()->SetStatusText( L"Find reached starting point of the search." );
          tsBellEx( wxICON_INFORMATION );
       }
       else
       {
          wxString msg;
-         msg << "Found \"" << event.GetFindString() << "\" at line " << (line+1) << ".";
+         msg << L"Found \"" << event.GetFindString() << L"\" at line " << (line+1) << L".";
          tsGetMainFrame()->SetStatusText( msg );
       }
 
@@ -2340,13 +2342,13 @@ void ScriptCtrl::OnFindNext( wxFindDialogEvent& event )
 
          if ( found == m_StartFindPos )
          {
-            tsGetMainFrame()->SetStatusText( "Find reached starting point of the search." );
+            tsGetMainFrame()->SetStatusText( L"Find reached starting point of the search." );
             tsBellEx( wxICON_INFORMATION );
          }
          else
          {
             wxString msg;
-            msg << "Found \"" << event.GetFindString() << "\" at line " << (line+1) << ".";
+            msg << L"Found \"" << event.GetFindString() << L"\" at line " << (line+1) << L".";
             tsGetMainFrame()->SetStatusText( msg );
          }
 
@@ -2357,7 +2359,7 @@ void ScriptCtrl::OnFindNext( wxFindDialogEvent& event )
          SetAnchor( pos );
          SetCurrentPos( pos );
          tsBellEx( wxICON_INFORMATION );
-         tsGetMainFrame()->SetStatusText( "The specified text was not found." );
+         tsGetMainFrame()->SetStatusText( L"The specified text was not found." );
       }
    }
 
@@ -2429,7 +2431,7 @@ void ScriptCtrl::OnFindReplaceAll( wxFindDialogEvent& event )
    LineScroll( 0, scroll.y );
 
    wxString msg;
-   msg << replaced << " occurrence(s) replaced.";
+   msg << replaced << L" occurrence(s) replaced.";
    tsGetMainFrame()->SetStatusText( msg );
    tsBellEx( wxICON_INFORMATION );
 }
@@ -2504,7 +2506,7 @@ void ScriptCtrl::OnContextMenu( wxContextMenuEvent& event )
    }
 
    // Did we click on an exec line?
-   wxRegEx expr( "\\mexec[ \t]*[(][ \t]*[\"]([~]?)([A-Za-z.\\\\/]*)[\"][ \t]*[)]", wxRE_ADVANCED | wxRE_ICASE );
+   wxRegEx expr( L"\\mexec[ \t]*[(][ \t]*[\"]([~]?)([A-Za-z.\\\\/]*)[\"][ \t]*[)]", wxRE_ADVANCED | wxRE_ICASE );
    wxASSERT( expr.IsValid() );
    wxString line = GetLine( clickLine );
    if ( expr.Matches( line ) ) 
@@ -2515,7 +2517,7 @@ void ScriptCtrl::OnContextMenu( wxContextMenuEvent& event )
          m_ExecPath = expr.GetMatch( line, 2 );
 
          wxString text;
-         text << "Open \"" << m_ExecPath << "\"";
+         text << L"Open \"" << m_ExecPath << L"\"";
          menu->AppendSeparator();
          menu->Append( tsID_SCRIPT_OPENEXEC, text );
 
@@ -2526,7 +2528,7 @@ void ScriptCtrl::OnContextMenu( wxContextMenuEvent& event )
          m_ExecPath = expr.GetMatch( line, 2 );
 
          wxString text;
-         text << "Open \"" << '~' << m_ExecPath << "\"";
+         text << L"Open \"" << '~' << m_ExecPath << L"\"";
          menu->AppendSeparator();
          menu->Append( tsID_SCRIPT_OPENEXEC, text );
 
@@ -2534,7 +2536,7 @@ void ScriptCtrl::OnContextMenu( wxContextMenuEvent& event )
          // is the root of this document.
          wxString modPath = project->GetModPath( m_FilePath );
          m_ExecPath.Clear();
-         m_ExecPath << "." << expr.GetMatch( line, 2 );
+         m_ExecPath << L"." << expr.GetMatch( line, 2 );
          wxFileName execPath( m_ExecPath );
          execPath.MakeAbsolute( modPath );
          m_ExecPath = execPath.GetFullPath();
@@ -2568,7 +2570,7 @@ void ScriptCtrl::OnContextMenu( wxContextMenuEvent& event )
          if ( !m_DefPaths.IsEmpty() ) 
          {
             wxString text;
-            text << "Go To \"" << word << "\" Definition";
+            text << L"Go To \"" << word << L"\" Definition";
 
             if ( addSep )
                menu->AppendSeparator();
@@ -2587,17 +2589,17 @@ void ScriptCtrl::OnContextMenu( wxContextMenuEvent& event )
 
    menu->AppendSeparator();
    tsMenu* folding = new tsMenu;
-   folding->Append( tsID_FOLDING_TOGGLEBLOCK, "Collapse Block" );
-   folding->Append( tsID_FOLDING_TOGGLEALLINBLOCK, "Collapse All In Block" );
+   folding->Append( tsID_FOLDING_TOGGLEBLOCK, L"Collapse Block" );
+   folding->Append( tsID_FOLDING_TOGGLEALLINBLOCK, L"Collapse All In Block" );
    //folding->AppendSeparator();
-   folding->Append( tsID_FOLDING_TOGGLEALL, "Expand All" );
-   folding->Append( tsID_FOLDING_COLLAPSETODEFS, "Collapse To Definitions" );
-   menu->Append( wxID_ANY, "Folding", folding );
+   folding->Append( tsID_FOLDING_TOGGLEALL, L"Expand All" );
+   folding->Append( tsID_FOLDING_COLLAPSETODEFS, L"Collapse To Definitions" );
+   menu->Append( wxID_ANY, L"Folding", folding );
 
    if ( wxFileExists( m_FilePath ) ) 
    {
       menu->AppendSeparator();
-      menu->Append( wxID_PROPERTIES, "&Properties" );
+      menu->Append( wxID_PROPERTIES, L"&Properties" );
    }
 
    //AppendWithIcon( menu, wxID_SAVE, "&Save", save16_xpm );
@@ -2616,7 +2618,7 @@ void ScriptCtrl::OnContextMenu( wxContextMenuEvent& event )
 
 void ScriptCtrl::OnProperties( wxCommandEvent& event )
 {
-   tsExecuteVerb( m_FilePath, "properties" );
+   tsExecuteVerb( m_FilePath, L"properties" );
 }
 
 void ScriptCtrl::OnOpenExec( wxCommandEvent& event )
@@ -2819,7 +2821,7 @@ void ScriptCtrl::UpdatePrefs( bool refresh )
    }
 
    // The default font is used for GUI things.
-   StyleSetFontAttr( wxSTC_STYLE_DEFAULT, 8, "Tahoma", false, false, false, wxFONTENCODING_DEFAULT );
+   StyleSetFontAttr( wxSTC_STYLE_DEFAULT, 8, L"Tahoma", false, false, false, wxFONTENCODING_DEFAULT );
 
    StyleSetBackground( wxSTC_STYLE_DEFAULT, tsGetPrefs().GetBgColor() );
    SetCaretForeground( tsGetPrefs().GetDefaultColor() );
@@ -2889,7 +2891,7 @@ void ScriptCtrl::UpdatePrefs( bool refresh )
 
    if ( tsGetPrefs().GetCodeFolding() )
    {
-      SetProperty( "fold", "1" );
+      SetProperty( L"fold", L"1" );
       Colourise( 0, GetEndStyled() );
    }
    else
@@ -2901,7 +2903,7 @@ void ScriptCtrl::UpdatePrefs( bool refresh )
 
          SetFoldLevel( i, 0 );
       }
-      SetProperty( "fold", "0" );
+      SetProperty( L"fold", L"0" );
    }
 
    IndicatorSetForeground( 2, tsGetPrefs().GetFoldingColor() ); 
@@ -2943,8 +2945,8 @@ void ScriptCtrl::UpdatePrefs( bool refresh )
 
    ShowLineNumbers( tsGetPrefs().GetLineNumbers() );
 
-   static const wxString sEnhancedFillups( "!\"#&'()*+,-./:;<=>?@[\\]^`{|}~" );
-   static const wxString sEnhancedGlobalFillups( "!\"#&'()*+,-./;<=>?@[\\]^`{|}~" );
+   static const wxString sEnhancedFillups( L"!\"#&'()*+,-./:;<=>?@[\\]^`{|}~" );
+   static const wxString sEnhancedGlobalFillups( L"!\"#&'()*+,-./;<=>?@[\\]^`{|}~" );
 
    if ( tsGetPrefs().GetEnhancedCompletion() )
    {
@@ -2982,11 +2984,11 @@ void ScriptCtrl::CommentSel( bool comment )
 
       if ( comment )
       {
-         text = white + "//" + text; 
+         text = white + L"//" + text; 
       }
       else
       {
-         if ( text.StartsWith( "//" ) )
+         if ( text.StartsWith( L"//" ) )
             text.Remove( 0, 2 );    
          text.Prepend( white );
       }

@@ -116,7 +116,7 @@ void ConfigDlg::CreateControls()
 
    // TODO: Fix to refresh colors on system color change!
    wxColor active( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE ) );
-   wxFont font( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma" );
+   wxFont font( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma" );
    m_PropGrid->GetGrid()->SetFont( font );
    m_PropGrid->GetGrid()->SetMarginColour( active );
    m_PropGrid->GetGrid()->SetLineColour( active );
@@ -249,9 +249,9 @@ wxASSERT( m_Exe );
 void ConfigDlg::OnOkClick( wxCommandEvent& event )
 {
    // Verify we got a name.
-   wxString name = m_PropGrid->GetPropertyValue( "General.Name" );
+   wxString name = m_PropGrid->GetPropertyValue( L"General.Name" );
    if ( name.IsEmpty() ) {
-      wxMessageDialog dlg( this, "You must enter a unique name for this config!", GetTitle(), wxOK );
+      wxMessageDialog dlg( this, L"You must enter a unique name for this config!", GetTitle(), wxOK );
       dlg.ShowModal();
       return;
    }
@@ -263,13 +263,13 @@ void ConfigDlg::OnOkClick( wxCommandEvent& event )
       if (  &m_Configs->Item( i ) != m_Config &&
             m_Configs->Item( i ).GetName() == name ) 
       {
-         wxMessageDialog dlg( this, "You already have a config with this name!", GetTitle(), wxOK );
+         wxMessageDialog dlg( this, L"You already have a config with this name!", GetTitle(), wxOK );
          dlg.ShowModal();
          return;
       }
    }
 
-   wxString exec = m_PropGrid->GetPropertyValue( "General.Executable" );
+   wxString exec = m_PropGrid->GetPropertyValue( L"General.Executable" );
    {
       wxFileName absolute( exec );
 
@@ -300,11 +300,11 @@ void ConfigDlg::OnOkClick( wxCommandEvent& event )
    wxASSERT( m_Config );
    m_Config->SetName( name );
    m_Config->SetExe( exec );
-   m_Config->SetArgs( m_PropGrid->GetPropertyValue( "General.Arguments" ) );
-   m_Config->SetPrecompile( m_PropGrid->GetPropertyValueAsBool( "Debugging.Enable Precompile" ) );
-   m_Config->SetUseSetModPaths( m_PropGrid->GetPropertyValueAsBool( "Debugging.Enable setModPaths" ) );
-   m_Config->SetInjectDebugger( m_PropGrid->GetPropertyValueAsBool( "Debugging.OneClick Debugging" ) );
-   m_Config->SetExports( m_PropGrid->GetPropertyValueAsBool( "ScriptSense.Build Exports" ) );
+   m_Config->SetArgs( m_PropGrid->GetPropertyValue( L"General.Arguments" ) );
+   m_Config->SetPrecompile( m_PropGrid->GetPropertyValueAsBool( L"Debugging.Enable Precompile" ) );
+   m_Config->SetUseSetModPaths( m_PropGrid->GetPropertyValueAsBool( L"Debugging.Enable setModPaths" ) );
+   m_Config->SetInjectDebugger( m_PropGrid->GetPropertyValueAsBool( L"Debugging.OneClick Debugging" ) );
+   m_Config->SetExports( m_PropGrid->GetPropertyValueAsBool( L"ScriptSense.Build Exports" ) );
 
    wxDialog::OnOK( event );
 }

@@ -28,15 +28,15 @@ public:
 
    // These are used to define what icon to use
    // for the string list identifier.
-   static const char* IDENT_VAR;             // "?0"
-   static const char* IDENT_FUNCTION;        // "?1"
-   static const char* IDENT_CLASS;           // "?2"
-   static const char* IDENT_DATABLOCK;       // "?3"
-   static const char* IDENT_OBJECT;          // "?4"
-   static const char* ITYPE_DATABLOCKOBJECT; // "?5"
-   static const char* IDENT_NAMESPACE;       // "?6"
-   static const char* ITYPE_PACKAGE;         // "?7"
-   static const char* ITYPE_KEYWORD;         // "?8"
+   static const wchar_t* IDENT_VAR;             // "?0"
+   static const wchar_t* IDENT_FUNCTION;        // "?1"
+   static const wchar_t* IDENT_CLASS;           // "?2"
+   static const wchar_t* IDENT_DATABLOCK;       // "?3"
+   static const wchar_t* IDENT_OBJECT;          // "?4"
+   static const wchar_t* ITYPE_DATABLOCKOBJECT; // "?5"
+   static const wchar_t* IDENT_NAMESPACE;       // "?6"
+   static const wchar_t* ITYPE_PACKAGE;         // "?7"
+   static const wchar_t* ITYPE_KEYWORD;         // "?8"
 
    bool HasData() const;
 

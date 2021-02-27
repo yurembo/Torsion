@@ -285,6 +285,9 @@
     <ClInclude Include="Markup\Markup.h">
       <Filter>Markup</Filter>
     </ClInclude>
+    <ClInclude Include="helper.h">
+      <Filter>Autocomp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoCompClass.cpp">

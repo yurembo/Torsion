@@ -10,7 +10,7 @@
 class VSMenuItem : public wxMenuItem
 {
    public:
-      VSMenuItem( wxMenu* parentMenu = NULL, int id = wxID_SEPARATOR, const wxString& text = "", const wxString& helpString = "", wxItemKind kind = wxITEM_NORMAL, wxMenu* subMenu = NULL );
+      VSMenuItem( wxMenu* parentMenu = NULL, int id = wxID_SEPARATOR, const wxString& text = L"", const wxString& helpString = L"", wxItemKind kind = wxITEM_NORMAL, wxMenu* subMenu = NULL );
       virtual ~VSMenuItem();
 
    protected:

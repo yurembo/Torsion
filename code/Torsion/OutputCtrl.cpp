@@ -56,7 +56,7 @@ OutputCtrl::OutputCtrl( wxWindow* parent, wxWindowID id, const wxString& name,
    StyleClearAll();
 
    // TODO: Make the font style a configuration option or use some OS default!
-   wxFont* font = wxTheFontList->FindOrCreateFont( 8, wxDEFAULT, wxNORMAL, wxNORMAL, false, "Courier New" );
+   wxFont* font = wxTheFontList->FindOrCreateFont( 8, wxDEFAULT, wxNORMAL, wxNORMAL, false, L"Courier New" );
    for ( int i = 0; i < wxSTC_STYLE_LASTPREDEFINED; i++ )
       StyleSetFont( i, *font );
 
@@ -105,11 +105,11 @@ OutputCtrl::OutputCtrl( wxWindow* parent, wxWindowID id, const wxString& name,
 
    // Create the regular expression here once.
    // TODO: This possibly needs fixing for non Win32 platforms.
-   m_ErrorExpr.Compile( "([^*?:<>|]*)[ \t]Line:[ \t]([0-9]*)[ \t]-[ \t](.*)",
+   m_ErrorExpr.Compile( L"([^*?:<>|]*)[ \t]Line:[ \t]([0-9]*)[ \t]-[ \t](.*)",
                         wxRE_ADVANCED | wxRE_ICASE );
    wxASSERT( m_ErrorExpr.IsValid() );
 
-   m_WarnExpr.Compile( "([^*?:<>|]*)[ \t][(]([0-9]*)[)]:[ \t](.*)",
+   m_WarnExpr.Compile( L"([^*?:<>|]*)[ \t][(]([0-9]*)[)]:[ \t](.*)",
                         wxRE_ADVANCED | wxRE_ICASE );
    wxASSERT( m_WarnExpr.IsValid() );
 }

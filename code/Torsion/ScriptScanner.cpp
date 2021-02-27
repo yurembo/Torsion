@@ -21,26 +21,26 @@ ScriptScanner::ScriptScanner()
       m_Token( SSTOKEN_EOF )
 {
    // Setup reserved words.
-   m_ReservedWords.Add( "break" );
-   m_ReservedWords.Add( "case" );
-   m_ReservedWords.Add( "continue" );
-   m_ReservedWords.Add( "datablock" );
-   m_ReservedWords.Add( "default" );
-   m_ReservedWords.Add( "else" );
-   m_ReservedWords.Add( "false" );
-   m_ReservedWords.Add( "for" );
-   m_ReservedWords.Add( "function" );
-   m_ReservedWords.Add( "if" );
-   m_ReservedWords.Add( "local" );
-   m_ReservedWords.Add( "new" );
-   m_ReservedWords.Add( "or" );
-   m_ReservedWords.Add( "package" );
-   m_ReservedWords.Add( "return" );
-   m_ReservedWords.Add( "singleton" );
-   m_ReservedWords.Add( "switch" );
-   m_ReservedWords.Add( "switch$" );
-   m_ReservedWords.Add( "true" );
-   m_ReservedWords.Add( "while" );
+   m_ReservedWords.Add( L"break" );
+   m_ReservedWords.Add( L"case" );
+   m_ReservedWords.Add( L"continue" );
+   m_ReservedWords.Add( L"datablock" );
+   m_ReservedWords.Add( L"default" );
+   m_ReservedWords.Add( L"else" );
+   m_ReservedWords.Add( L"false" );
+   m_ReservedWords.Add( L"for" );
+   m_ReservedWords.Add( L"function" );
+   m_ReservedWords.Add( L"if" );
+   m_ReservedWords.Add( L"local" );
+   m_ReservedWords.Add( L"new" );
+   m_ReservedWords.Add( L"or" );
+   m_ReservedWords.Add( L"package" );
+   m_ReservedWords.Add( L"return" );
+   m_ReservedWords.Add( L"singleton" );
+   m_ReservedWords.Add( L"switch" );
+   m_ReservedWords.Add( L"switch$" );
+   m_ReservedWords.Add( L"true" );
+   m_ReservedWords.Add( L"while" );
 
    m_ReservedMaxLen = 0;
    m_ReservedMinLen = 99999;
@@ -55,41 +55,41 @@ ScriptScanner::ScriptScanner()
    }
 
    // Setup operators.
-   m_Operators.Add( "!" );
-   m_Operators.Add( "!$=" );
-   m_Operators.Add( "!=" );
-   m_Operators.Add( "-" );
-   m_Operators.Add( "--" );
-   m_Operators.Add( "$=" );
-   m_Operators.Add( "%" );
-   m_Operators.Add( "%=" );
-   m_Operators.Add( "&" );
-   m_Operators.Add( "&&" );
-   m_Operators.Add( "&=" );
-   m_Operators.Add( "*" );
-   m_Operators.Add( "*=" );
-   m_Operators.Add( "/" );
-   m_Operators.Add( "/=" );
-   m_Operators.Add( "@" );
-   m_Operators.Add( "^" );
-   m_Operators.Add( "^=" );
-   m_Operators.Add( "|" );
-   m_Operators.Add( "||" );
-   m_Operators.Add( "|=" );
-   m_Operators.Add( "+" );
-   m_Operators.Add( "++" );
-   m_Operators.Add( "+=" );
-   m_Operators.Add( "<" );
-   m_Operators.Add( "<<" );
-   m_Operators.Add( "<<=" );
-   m_Operators.Add( "<=" );
-   m_Operators.Add( "=" );
-   m_Operators.Add( "-=" );
-   m_Operators.Add( "==" );
-   m_Operators.Add( ">" );
-   m_Operators.Add( ">=" );
-   m_Operators.Add( ">>" );
-   m_Operators.Add( ">>=" );
+   m_Operators.Add( L"!" );
+   m_Operators.Add( L"!$=" );
+   m_Operators.Add( L"!=" );
+   m_Operators.Add( L"-" );
+   m_Operators.Add( L"--" );
+   m_Operators.Add( L"$=" );
+   m_Operators.Add( L"%" );
+   m_Operators.Add( L"%=" );
+   m_Operators.Add( L"&" );
+   m_Operators.Add( L"&&" );
+   m_Operators.Add( L"&=" );
+   m_Operators.Add( L"*" );
+   m_Operators.Add( L"*=" );
+   m_Operators.Add( L"/" );
+   m_Operators.Add( L"/=" );
+   m_Operators.Add( L"@" );
+   m_Operators.Add( L"^" );
+   m_Operators.Add( L"^=" );
+   m_Operators.Add( L"|" );
+   m_Operators.Add( L"||" );
+   m_Operators.Add( L"|=" );
+   m_Operators.Add( L"+" );
+   m_Operators.Add( L"++" );
+   m_Operators.Add( L"+=" );
+   m_Operators.Add( L"<" );
+   m_Operators.Add( L"<<" );
+   m_Operators.Add( L"<<=" );
+   m_Operators.Add( L"<=" );
+   m_Operators.Add( L"=" );
+   m_Operators.Add( L"-=" );
+   m_Operators.Add( L"==" );
+   m_Operators.Add( L">" );
+   m_Operators.Add( L">=" );
+   m_Operators.Add( L">>" );
+   m_Operators.Add( L">>=" );
    m_OperatorMaxLen = 0;
    m_OperatorMinLen = 99999;
    for ( int i=0; i < m_Operators.GetCount(); i++ )
@@ -273,7 +273,7 @@ const SSTOKEN& ScriptScanner::Step( bool skipComments )
          if (  !IsWordChar( ch ) &&
                !( ch == ':' && m_Stream->Peek() == ':' ) &&
                !( m_Value.Last() == ':' && ch == ':' && m_Stream->Peek() != ':' ) &&
-               !( m_Value == "switch" && ch == '$' ) ) {
+               !( m_Value == L"switch" && ch == '$' ) ) {
 
             m_Stream->SeekI( -1, wxFromCurrent );
 
@@ -291,9 +291,9 @@ const SSTOKEN& ScriptScanner::Step( bool skipComments )
 
             // Did we maybe get the special operators; TAB,
             // NL, SPC?  Note the case matters!
-            else if ( m_Value == "TAB" ||
-                      m_Value == "NL" ||
-                      m_Value == "SPC" )
+            else if ( m_Value == L"TAB" ||
+                      m_Value == L"NL" ||
+                      m_Value == L"SPC" )
                m_Token = SSTOKEN_OPERATOR;
 
             break;

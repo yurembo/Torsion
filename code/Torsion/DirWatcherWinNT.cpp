@@ -5,6 +5,9 @@
 #include "PreCompiled.h"
 #include "DirWatcherWinNT.h"
 
+#include <tchar.h>
+#include <atlbase.h>
+
 
 #ifdef _DEBUG 
    #define new DEBUG_NEW 
@@ -106,7 +109,8 @@ int DirWatcherWinNT::GetSignaled( wxArrayString* signaled )
    // We got some results... process them.
    int signals = 0;
    wxChar* curr = m_Buffer;
-   wxChar file[MAX_PATH];
+   //wxChar file[MAX_PATH];
+   LPSTR file;
    wxFileName fixup;
    wxString dir;
    for ( ; bytes != 0; )
@@ -121,7 +125,8 @@ int DirWatcherWinNT::GetSignaled( wxArrayString* signaled )
       file[ chars ] = 0;
 
       // Look to see if this is an excluded file/folder.
-      fixup.Assign( file );
+	  wxString f = wchar_t(file);
+      fixup.Assign( f );
       if ( !IsExcluded( fixup ) )
       {
          

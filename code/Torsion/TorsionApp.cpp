@@ -23,6 +23,8 @@
 #include <wx/uri.h>
 #include <wx/msw/registry.h>
 
+#include "helper.h"
+
 #ifdef _DEBUG 
    #define new DEBUG_NEW 
 #endif 
@@ -36,7 +38,7 @@ class TorsionDDEConn : public wxDDEConnection
       virtual bool OnExecute(const wxString& topic, char* data, int size, wxIPCFormat format)
       {
          wxASSERT( ts_MainFrame );
-         wxString file( data, size );
+		 wxString file( widen(data).c_str(), size );
 
          // Look for a line number at the end of the file.
          long line = 0;
@@ -56,7 +58,7 @@ class TorsionDDEServer : public wxDDEServer
    public:
       virtual wxConnectionBase * OnAcceptConnection(const wxString& topic)
       {
-         if ( topic.CmpNoCase( "open" ) == 0 )
+         if ( topic.CmpNoCase( L"open" ) == 0 )
             return new TorsionDDEConn;
          return NULL;
       }
@@ -82,9 +84,9 @@ TorsionApp::TorsionApp()
 {
    // We create two... one for the installer to check
    // for running instances.  Another for each user.
-   wxString instName( "Torsion.SickheadGames" );
+   wxString instName( L"Torsion.SickheadGames" );
    m_InstChecker = new wxSingleInstanceChecker( instName );
-   m_UserInstChecker = new wxSingleInstanceChecker( wxString::Format( "%s|%s", instName.c_str(), wxGetUserId().c_str() ) );
+   m_UserInstChecker = new wxSingleInstanceChecker( wxString::Format( L"%s|%s", instName.c_str(), wxGetUserId().c_str() ) );
 }
 
 TorsionApp::~TorsionApp()
@@ -104,8 +106,8 @@ bool TorsionApp::OnInit()
    // We don't want error dialogs from the wxWindows runtime!
 	delete wxLog::SetActiveTarget( new wxLogStderr() );
 
-   SetAppName( "Torsion" );
-   SetVendorName( "Sickhead Games, LLC" );
+   SetAppName( L"Torsion" );
+   SetVendorName( L"Sickhead Games, LLC" );
 
    // Initialize the application path which is used
    // in various places for access to data like prefs,
@@ -121,24 +123,24 @@ bool TorsionApp::OnInit()
 
    // Parse the command line.
    wxCmdLineParser cmdLine( argc, argv );
-   cmdLine.AddSwitch( "exts", wxEmptyString, "Register the application file extensions.", wxCMD_LINE_PARAM_OPTIONAL );
-   cmdLine.AddSwitch( "unexts", wxEmptyString, "Unregister the application file extensions.", wxCMD_LINE_PARAM_OPTIONAL );
-   cmdLine.AddOption( "debug", wxEmptyString, "When a project file is specified it starts a debug session.", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_NEEDS_SEPARATOR );
-   cmdLine.AddParam( "Input file(s)", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_PARAM_MULTIPLE );
+   cmdLine.AddSwitch( L"exts", wxEmptyString, L"Register the application file extensions.", wxCMD_LINE_PARAM_OPTIONAL );
+   cmdLine.AddSwitch( L"unexts", wxEmptyString, L"Unregister the application file extensions.", wxCMD_LINE_PARAM_OPTIONAL );
+   cmdLine.AddOption( L"debug", wxEmptyString, L"When a project file is specified it starts a debug session.", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_NEEDS_SEPARATOR );
+   cmdLine.AddParam( L"Input file(s)", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL | wxCMD_LINE_PARAM_MULTIPLE );
    cmdLine.Parse( false );
 
    // Load the preferences!
    wxFileName prefs( GetAppPath() );
-   prefs.SetFullName( "preferences.xml" );
+   prefs.SetFullName( L"preferences.xml" );
 	m_Prefs.Load( prefs.GetFullPath() );
 
    // Are we registering or unregistering extensions?
-   if ( cmdLine.Found( "exts" ) )
+   if ( cmdLine.Found( L"exts" ) )
    {
       RegisterScriptExts();      
       return false;
    }
-   else if ( cmdLine.Found( "unexts" ) )
+   else if ( cmdLine.Found( L"unexts" ) )
    {
       UnregisterScriptExts( tsGetPrefs().GetScriptExtensions() );
       return false;
@@ -151,7 +153,7 @@ bool TorsionApp::OnInit()
    {
       wxFileName name( cmdLine.GetParam( i ) );
       name = name.GetLongPath();
-      if ( name.GetExt().CmpNoCase( "torsion" ) == 0 )
+      if ( name.GetExt().CmpNoCase( L"torsion" ) == 0 )
          Projects.Add( name.GetFullPath() );
       else
          Files.Add( name.GetFullPath() );
@@ -159,7 +161,7 @@ bool TorsionApp::OnInit()
 
    // Get the debug config...
    wxString debugConfig;
-   cmdLine.Found( "debug", &debugConfig );
+   cmdLine.Found( L"debug", &debugConfig );
 
    // If we have another running and we're opening a script file
    // then just send the file list to it.
@@ -167,7 +169,7 @@ bool TorsionApp::OnInit()
    if ( Files.GetCount() > 0 && m_UserInstChecker->IsAnotherRunning() ) 
    {
       wxDDEClient client;
-      wxDDEConnection* conn = wxDynamicCast( client.MakeConnection( "", "Torsion", "open" ), wxDDEConnection );
+      wxDDEConnection* conn = wxDynamicCast( client.MakeConnection( L"", L"Torsion", L"open" ), wxDDEConnection );
       if ( conn ) 
       {
          for ( int i=0; i < Files.GetCount(); i++ )
@@ -232,7 +234,7 @@ bool TorsionApp::OnInit()
 
    // Load the DDE server.
    m_DDEServer = new TorsionDDEServer;
-   m_DDEServer->Create( "Torsion" );
+   m_DDEServer->Create( L"Torsion" );
 
    // Load the first project we got or the last
    // project if that is enabled and set.
@@ -293,7 +295,7 @@ void TorsionApp::CleanUp()
 
    // Save the app prefs.
    wxFileName prefs( GetAppPath() );
-   prefs.SetFullName( "preferences.xml" );
+   prefs.SetFullName( L"preferences.xml" );
    m_Prefs.SaveIfDirty( prefs.GetFullPath() );
 
    wxApp::CleanUp();
@@ -331,21 +333,21 @@ bool TorsionApp::CheckForUpdate( bool noUpdateMsg )
       {
          wxString msg;
          if ( version.IsEmpty() )
-            msg = "The update website failed to respond.";
+            msg = L"The update website failed to respond.";
          else
-            msg = "You have the most current version.";
+            msg = L"You have the most current version.";
 
-         wxMessageDialog dlg( ts_MainFrame, msg, "Torsion", wxOK | wxICON_INFORMATION );
+         wxMessageDialog dlg( ts_MainFrame, msg, L"Torsion", wxOK | wxICON_INFORMATION );
          dlg.ShowModal();
       }
 
       return false;
    }
 
-   wxMessageDialog dlg( ts_MainFrame, "There is a new version of Torsion available.  Do you want to download it now?", "Torsion", wxYES_NO | wxICON_INFORMATION );
+   wxMessageDialog dlg( ts_MainFrame, L"There is a new version of Torsion available.  Do you want to download it now?", L"Torsion", wxYES_NO | wxICON_INFORMATION );
    if ( dlg.ShowModal() == wxID_YES )
    {
-      wxLaunchDefaultBrowser( "http://www.garagegames.com/myAccount/" );
+      wxLaunchDefaultBrowser( L"http://www.garagegames.com/myAccount/" );
       return false;
    }
 
@@ -359,16 +361,16 @@ void TorsionApp::OnFatalException()
    StackDump dump;
    dump.Dump( &address, &data );
 
-   if ( wxMessageBox( "Torsion has crashed!  Do you want to submit "
-         "the crash report?", "Torsion", wxYES_NO | wxICON_ERROR ) == wxYES )
+   if ( wxMessageBox( L"Torsion has crashed!  Do you want to submit "
+         L"the crash report?", L"Torsion", wxYES_NO | wxICON_ERROR ) == wxYES )
    {
       wxString cmd;
-      cmd << "http://mantis.sickheadgames.com/bug_report_page.php?project_id=2&severity=6&";
-      cmd << "summary=Crash Report - " << address << "&";
-      cmd <<   "description=Place information on what triggered the crash here.  Do not "
-               "remove any information in the additional information box below.  Steps "
-               "to reproduce the crash are extremely helpful.&";
-      cmd << "additional_info=" << data;
+      cmd << L"http://mantis.sickheadgames.com/bug_report_page.php?project_id=2&severity=6&";
+      cmd << L"summary=Crash Report - " << address << L"&";
+      cmd <<   L"description=Place information on what triggered the crash here.  Do not "
+               L"remove any information in the additional information box below.  Steps "
+               L"to reproduce the crash are extremely helpful.&";
+      cmd << L"additional_info=" << data;
 
       wxURI uri;
       uri.Create( cmd );
@@ -384,7 +386,7 @@ void TorsionApp::RegisterScriptExts()
    for ( int i=0; i < exts.GetCount(); i++ )
    {
       wxString extKey;
-      extKey << "HKCR\\." << exts[i];
+      extKey << L"HKCR\\." << exts[i];
       wxRegKey key( extKey );
 
       if ( !key.Exists() )
@@ -392,9 +394,9 @@ void TorsionApp::RegisterScriptExts()
          // The extension does not exist... so we create 
          // it and own it.
          key.Create();
-         key.SetValue( NULL, "TorsionTorqueScript" );
-         key.SetValue( "Content Type", "text/plain" );
-         key.SetValue( "PerceivedType", "text" );
+         key.SetValue( NULL, L"TorsionTorqueScript" );
+         key.SetValue( L"Content Type", L"text/plain" );
+         key.SetValue( L"PerceivedType", L"text" );
          continue;
       }
 
@@ -403,17 +405,17 @@ void TorsionApp::RegisterScriptExts()
       // set to TorsionTorqueScript refresh it.
       wxString value;
       if (  key.QueryValue( NULL, value ) && 
-            ( value.IsEmpty() || value == "TorsionTorqueScript" ) )
+            ( value.IsEmpty() || value == L"TorsionTorqueScript" ) )
       {
-         key.SetValue( NULL, "TorsionTorqueScript" );
-         key.SetValue( "Content Type", "text/plain" );
-         key.SetValue( "PerceivedType", "text" );
+         key.SetValue( NULL, L"TorsionTorqueScript" );
+         key.SetValue( L"Content Type", L"text/plain" );
+         key.SetValue( L"PerceivedType", L"text" );
          continue;
       }
 
       // Ok... someone is using this key, so all we can do
       // is add ourselves to the 'open with' list.
-      extKey << "\\OpenWithList\\torsion.exe";
+      extKey << L"\\OpenWithList\\torsion.exe";
       wxRegKey openWithList( extKey );
       openWithList.Create();
    }
@@ -424,7 +426,7 @@ void TorsionApp::UnregisterScriptExts( const wxArrayString& exts )
    for ( int i=0; i < exts.GetCount(); i++ )
    {
       wxString extKey;
-      extKey << "HKCR\\." << exts[i];
+      extKey << L"HKCR\\." << exts[i];
       wxRegKey key( extKey );
       if ( !key.Exists() )
          continue;
@@ -432,16 +434,16 @@ void TorsionApp::UnregisterScriptExts( const wxArrayString& exts )
       // Check the default key for our value 'TorsionTorqueScript'.
       wxString value;
       key.QueryValue( NULL, value );
-      if ( value == "TorsionTorqueScript" )
+      if ( value == L"TorsionTorqueScript" )
       {
          // We own this... delete stuff we put in it.
          key.DeleteValue( NULL );
-         key.DeleteValue( "Content Type" );
-         key.DeleteValue( "PerceivedType" );
+         key.DeleteValue( L"Content Type" );
+         key.DeleteValue( L"PerceivedType" );
       }
 
       // Check the open with list for our key... and remove it.
-      extKey << "\\OpenWithList\\torsion.exe";
+      extKey << L"\\OpenWithList\\torsion.exe";
       wxRegKey openWithList( extKey );
       if ( openWithList.Exists() )
          openWithList.DeleteSelf();

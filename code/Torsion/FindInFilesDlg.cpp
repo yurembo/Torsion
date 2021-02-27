@@ -303,12 +303,12 @@ wxArrayString FindInFilesDlg::GetPathsFromLookIn( const wxString& lookin ) const
 
    // TODO: Add <Open Files>.
 
-   wxStringTokenizer toker( lookin, ";," );
+   wxStringTokenizer toker( lookin, L";," );
    while ( toker.HasMoreTokens() ) 
    {
       wxString path = toker.NextToken();
 
-      if ( path.CmpNoCase( "Project" ) == 0 ) 
+      if ( path.CmpNoCase( L"Project" ) == 0 ) 
       {            
          wxASSERT( tsGetMainFrame() );
          if ( !tsGetMainFrame()->GetProjectDoc() )
@@ -316,7 +316,7 @@ wxArrayString FindInFilesDlg::GetPathsFromLookIn( const wxString& lookin ) const
 
          path = tsGetMainFrame()->GetProjectDoc()->GetWorkingDir();
       }
-      else if ( path.CmpNoCase( "Base Directory" ) == 0 ) 
+      else if ( path.CmpNoCase( L"Base Directory" ) == 0 ) 
       {
          wxASSERT( tsGetMainFrame() );
          if ( !tsGetMainFrame()->GetProjectDoc() )
@@ -385,9 +385,9 @@ void FindInFilesDlg::OnFindClick( wxCommandEvent& event )
 void FindInFilesDlg::OnFindUpdate( wxUpdateUIEvent& event )
 {
    if ( m_FindThread->IsSearching() ) 
-      event.SetText( "&Stop" );
+      event.SetText( L"&Stop" );
    else
-      event.SetText( "&Find" );
+      event.SetText( L"&Find" );
 }
 
 
@@ -403,8 +403,8 @@ void FindInFilesDlg::OnBrowseClick( wxCommandEvent& event )
    if ( !paths.IsEmpty() )
       lookin = paths[0];
 
-   wxDirDialog dlg( this, "Select the folder to search.", lookin );
-   dlg.SetTitle( "Look In" );
+   wxDirDialog dlg( this, L"Select the folder to search.", lookin );
+   dlg.SetTitle( L"Look In" );
    if ( dlg.ShowModal() != wxID_OK )
       return;
 

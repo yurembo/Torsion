@@ -110,7 +110,7 @@ wxDirTraverseResult ScriptCollector::OnFile( const wxString& name )
       // else skip scripts where the DSO exists and is newer.
       for ( int i=0; i < m_PC.m_DSOExts.GetCount(); i++ )
       {
-         wxFileName dsoName( name + '.' + m_PC.m_DSOExts[i] );
+         wxFileName dsoName( name + L"." + m_PC.m_DSOExts[i] );
          if (  dsoName.FileExists() &&
                dsoName.GetModificationTime().IsLaterThan( script.GetModificationTime() ))
             return wxDIR_CONTINUE;
@@ -253,7 +253,7 @@ wxThread::ExitCode PreCompilerThread::Entry()
       if ( !dir.IsOpened() )
          return 0;
       ScriptCollector sink( *this );
-      dir.Traverse( sink, "*.*", wxDIR_DIRS | wxDIR_FILES );
+      dir.Traverse( sink, L"*.*", wxDIR_DIRS | wxDIR_FILES );
    }
    else
    {
@@ -270,10 +270,10 @@ wxThread::ExitCode PreCompilerThread::Entry()
 
    // Copy the precompiler script.
    wxFileName sourceScript( wxGetApp().GetAppPath() );
-   sourceScript.SetFullName( "torsion_precompile.cs" );
+   sourceScript.SetFullName(L"torsion_precompile.cs" );
    m_Script.Clear();
    m_Script.AssignDir( m_WorkingDir );
-   m_Script.SetFullName( "torsion_precompile.tmp" );
+   m_Script.SetFullName( L"torsion_precompile.tmp" );
    if ( !wxCopyFile( sourceScript.GetFullPath(), m_Script.GetFullPath() ) )
       return 0;
 
@@ -289,7 +289,7 @@ wxThread::ExitCode PreCompilerThread::Entry()
       if ( TestDestroy() )
          return (ExitCode)0;
 
-      if ( scriptFile.GetLine( insert ) == "// PRECOMPILE_START" )
+      if ( scriptFile.GetLine( insert ) == L"// PRECOMPILE_START" )
          break;
    }
 
@@ -310,7 +310,7 @@ wxThread::ExitCode PreCompilerThread::Entry()
          paths << path << ';';
       }
       wxString cmd;
-      cmd << "setModPaths( \"" << paths << "\" );";
+      cmd << L"setModPaths( \"" << paths << L"\" );";
       ++insert;
       scriptFile.InsertLine( cmd, insert );
    }
@@ -322,9 +322,9 @@ wxThread::ExitCode PreCompilerThread::Entry()
          return (ExitCode)0;
 
       wxString path( m_Scripts[i] );
-      path.Replace( "\\", "/" );
+      path.Replace( L"\\", L"/" );
       wxString line;
-      line << "compile( \"" << path << "\" );";
+      line << L"compile( \"" << path << L"\" );";
       scriptFile.InsertLine( line, insert + i + 1 );
    }
 
@@ -334,7 +334,7 @@ wxThread::ExitCode PreCompilerThread::Entry()
    // Empty the console log to clear it.
    wxFileName output;
    output.AssignDir( m_WorkingDir );
-   output.SetFullName( "console.log" );
+   output.SetFullName( L"console.log" );
    {
       wxFile file( output.GetFullPath(), wxFile::write );
       file.Close();
@@ -348,7 +348,7 @@ wxThread::ExitCode PreCompilerThread::Entry()
    memset(&se, 0, sizeof(se)); 
    se.cbSize = sizeof(se); 
    se.fMask = SEE_MASK_DOENVSUBST | SEE_MASK_NOCLOSEPROCESS | SEE_MASK_FLAG_NO_UI; 
-   se.lpVerb = "open";
+   se.lpVerb = L"open";
    se.lpFile = m_Exec.c_str();
    se.lpDirectory = m_WorkingDir.c_str();
    se.lpParameters = args.c_str(); 

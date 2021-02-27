@@ -260,7 +260,7 @@ bool MainFrame::Create( DocManager* manager, wxFrame* frame, const wxString& tit
 
    wxIconBundle icons;
 #ifdef __WXMSW__
-   icons.AddIcon( wxIcon( "\"AAAAAAIDI_MAINFRAME\"", wxBITMAP_TYPE_ICO_RESOURCE ) );
+   icons.AddIcon( wxIcon( L"\"AAAAAAIDI_MAINFRAME\"", wxBITMAP_TYPE_ICO_RESOURCE ) );
 #else
    icons.AddIcon( wxIcon( torsion16_xpm ) );
    icons.AddIcon( wxIcon( torsion32_xpm ) );
@@ -345,10 +345,10 @@ bool MainFrame::Create( DocManager* manager, wxFrame* frame, const wxString& tit
       m_EditMenu->Append( wxID_ANY, _T( "Boo&kmarks" ), bookmarkMenu );
 
       tsMenu* foldingMenu = new tsMenu;
-      foldingMenu->Append( tsID_FOLDING_TOGGLEBLOCK, "&Collapse Block" );
-      foldingMenu->Append( tsID_FOLDING_TOGGLEALLINBLOCK, "Collapse &All In Block" );
-      foldingMenu->Append( tsID_FOLDING_TOGGLEALL, "E&xpand All" );
-      foldingMenu->Append( tsID_FOLDING_COLLAPSETODEFS, "Collapse To &Definitions" );
+      foldingMenu->Append( tsID_FOLDING_TOGGLEBLOCK, L"&Collapse Block" );
+      foldingMenu->Append( tsID_FOLDING_TOGGLEALLINBLOCK, L"Collapse &All In Block" );
+      foldingMenu->Append( tsID_FOLDING_TOGGLEALL, L"E&xpand All" );
+      foldingMenu->Append( tsID_FOLDING_COLLAPSETODEFS, L"Collapse To &Definitions" );
       m_EditMenu->Append( wxID_ANY, _T( "Foldi&ng" ), foldingMenu );
 
       tsMenu* scriptSenseMenu = new tsMenu;
@@ -434,7 +434,7 @@ bool MainFrame::Create( DocManager* manager, wxFrame* frame, const wxString& tit
       wxMenuItem* item = helpMenu->Append( wxID_ABOUT, _T( "&About Torsion" ) );
       #ifdef __WXMSW__
          wxBitmap bmp;
-         bmp.CopyFromIcon( wxIcon( "\"AAAAAAIDI_MAINFRAME\"", wxBITMAP_TYPE_ICO_RESOURCE, 16, 16 ) );
+         bmp.CopyFromIcon( wxIcon( L"\"AAAAAAIDI_MAINFRAME\"", wxBITMAP_TYPE_ICO_RESOURCE, 16, 16 ) );
          item->SetBitmap( bmp );
       #else
          item->SetBitmap( wxBitmap( torsion16_xpm ) );
@@ -491,11 +491,11 @@ bool MainFrame::Create( DocManager* manager, wxFrame* frame, const wxString& tit
    toolBar->AddTool( tsID_DEBUG_STEP, _T( "Step" ), ts_stepin16, _T( "Step (F11)" ) );
    toolBar->AddTool( tsID_DEBUG_STEP_OVER, _T( "Step Over" ), ts_stepover16, _T( "Step Over (F10)" ) );
    toolBar->AddTool( tsID_DEBUG_STEP_OUT, _T( "Step Out" ), ts_stepout16, _T( "Step Out (Shift+F11)" ) );
-   m_ConfigComboBox = new wxComboBox( toolBar, tsID_CONFIGCOMBO, "", wxDefaultPosition, wxSize( 160, wxDefaultCoord), 0, NULL, wxSTATIC_BORDER | wxCB_DROPDOWN | wxCB_READONLY | wxCB_SORT );
+   m_ConfigComboBox = new wxComboBox( toolBar, tsID_CONFIGCOMBO, L"", wxDefaultPosition, wxSize( 160, wxDefaultCoord), 0, NULL, wxSTATIC_BORDER | wxCB_DROPDOWN | wxCB_READONLY | wxCB_SORT );
    toolBar->AddControl( m_ConfigComboBox );
    toolBar->AddSeparator();
    toolBar->AddTool( tsID_FINDINFILES, _T( "Find in Files" ), ts_findinfiles16, _T( "Find in Files (Ctrl+Shift+F)" ) );
-   m_FindComboBox = new wxComboBox( toolBar, tsID_FINDCOMBO, "", wxDefaultPosition, wxSize( 175, wxDefaultCoord), 0, NULL, wxSTATIC_BORDER );
+   m_FindComboBox = new wxComboBox( toolBar, tsID_FINDCOMBO, L"", wxDefaultPosition, wxSize( 175, wxDefaultCoord), 0, NULL, wxSTATIC_BORDER );
    AppPrefs::AddStringsToCombo( m_FindComboBox, tsGetPrefs().GetFindStrings() );
    toolBar->AddControl( m_FindComboBox );
    //toolBar->AddTool( tsID_FINDPREV, _T( "Find Previous" ), wxBitmap( search_prev16_xpm ), _T( "Find Previous (Shift+F3)" ) );
@@ -587,7 +587,7 @@ bool MainFrame::Create( DocManager* manager, wxFrame* frame, const wxString& tit
 
 	// Where you can spy on anything.
 	m_WatchWindow = new WatchCtrl( m_BottomNotebook, true );
-	m_BottomNotebook->AddPage( m_WatchWindow, "Watch", wxEmptyString, false, 2 );
+	m_BottomNotebook->AddPage( m_WatchWindow, L"Watch", wxEmptyString, false, 2 );
 
    // The current callstack...
 	m_CallStack = new wxListView;
@@ -595,14 +595,14 @@ bool MainFrame::Create( DocManager* manager, wxFrame* frame, const wxString& tit
    m_CallStack->Create( m_BottomNotebook, tsID_CALLSTACK,
       						wxDefaultPosition, wxDefaultSize,
 		      				wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_HRULES | wxLC_VRULES | wxSTATIC_BORDER );
-	m_CallStack->InsertColumn( 0, "Function", wxLIST_FORMAT_LEFT, 300 );
-	m_CallStack->InsertColumn( 1, "File", wxLIST_FORMAT_LEFT, 300 );
-	m_CallStack->InsertColumn( 2, "Line", wxLIST_FORMAT_LEFT, 200 );
-	m_BottomNotebook->AddPage( m_CallStack, "Callstack", wxEmptyString, false, 1 );
+	m_CallStack->InsertColumn( 0, L"Function", wxLIST_FORMAT_LEFT, 300 );
+	m_CallStack->InsertColumn( 1, L"File", wxLIST_FORMAT_LEFT, 300 );
+	m_CallStack->InsertColumn( 2, L"Line", wxLIST_FORMAT_LEFT, 200 );
+	m_BottomNotebook->AddPage( m_CallStack, L"Callstack", wxEmptyString, false, 1 );
 
    // The "find" window.
 	m_FindWindow = new FindResultsCtrl( m_BottomNotebook, tsID_FINDWINDOW, m_FindThread );
-   m_BottomNotebook->AddPage( m_FindWindow, "Find Results", wxEmptyString, false, 0 );
+   m_BottomNotebook->AddPage( m_FindWindow, L"Find Results", wxEmptyString, false, 0 );
    
    // The breakpoints...
    m_Breakpoints = new BreakpointsPanel();
@@ -614,7 +614,7 @@ bool MainFrame::Create( DocManager* manager, wxFrame* frame, const wxString& tit
    m_BottomNotebook->SetSelection( 0 );
 
    wxFileName chmFile( wxGetApp().GetAppPath() );
-   chmFile.SetFullName( "Torsion.chm" );
+   chmFile.SetFullName( L"Torsion.chm" );
    m_HelpController.Initialize( chmFile.GetFullPath() );
 
    return true;
@@ -668,7 +668,7 @@ void MainFrame::OnCloseWindow( wxCloseEvent& event )
       // Look to see if we need to stop the precompile.
       if ( m_PreCompiler ) 
       {
-         wxMessageDialog dlg( this, "Do you want to stop the precompiler?", "Torsion", wxYES_NO | wxICON_QUESTION  );
+         wxMessageDialog dlg( this, L"Do you want to stop the precompiler?", L"Torsion", wxYES_NO | wxICON_QUESTION  );
          if ( dlg.ShowModal() != wxID_YES )
             return;
 
@@ -678,7 +678,7 @@ void MainFrame::OnCloseWindow( wxCloseEvent& event )
    	wxASSERT( tsGetDebugger() );
       if ( tsGetDebugger()->IsRunning() ) 
       {
-         wxMessageDialog dlg( this, "Do you want to stop debugging?", "Torsion", wxYES_NO | wxICON_QUESTION  );
+         wxMessageDialog dlg( this, L"Do you want to stop debugging?", L"Torsion", wxYES_NO | wxICON_QUESTION  );
          if ( dlg.ShowModal() != wxID_YES )
             return;
 
@@ -726,7 +726,7 @@ void MainFrame::OnNewProject( wxCommandEvent& event )
    // TODO: Consider adding a wizard here instead.
    ProjectDoc dummyDoc;
    ProjectDlg dlg( this );
-   dlg.SetLabel( "New Project" );
+   dlg.SetLabel( L"New Project" );
    if ( dlg.ShowModal( &dummyDoc ) != wxID_OK ) {
       return;
    }
@@ -1037,7 +1037,7 @@ void MainFrame::OnExecTool( wxCommandEvent& event )
    }
 
    // Launch the command!
-   if ( !tsShellExecute::execDeatched( "open", cwd, command, args, tsSW_SHOWNORMAL ) )
+   if ( !tsShellExecute::execDeatched( L"open", cwd, command, args, tsSW_SHOWNORMAL ) )
       tsBellEx( wxICON_ERROR );
 }
 
@@ -1086,7 +1086,7 @@ void MainFrame::OnPreferences( wxCommandEvent& event )
       // Store the prefs now... so that we don't loose
       // settings if they happen to crash out.
       wxFileName prefs( wxGetApp().GetAppPath() );
-      prefs.SetFullName( "preferences.xml" );
+      prefs.SetFullName( L"preferences.xml" );
       tsGetPrefs().SaveIfDirty( prefs.GetFullPath() );
    }
 }
@@ -1185,9 +1185,9 @@ void MainFrame::DoPrecompile( int eventId )
    wxASSERT( currentCfg );
 
    // Print the startup message...
-   m_OutputPanel->AppendText( "Precompiling...\r\n\r\n" );
+   m_OutputPanel->AppendText( L"Precompiling...\r\n\r\n" );
 
-   wxString activeScript = "";
+   wxString activeScript = L"";
    if ( eventId == tsID_PROJECT_PRECOMPILE_ACTIVE )
    {
       ScriptView* view = GetActiveView();
@@ -1236,11 +1236,11 @@ void MainFrame::OnPrecompileDone( wxCommandEvent& event )
    if ( !success )
    {
       wxASSERT( m_OutputPanel );
-      m_OutputPanel->AppendText( "Precompile failed\r\n" ); 
+      m_OutputPanel->AppendText( L"Precompile failed\r\n" ); 
    
       if ( m_AfterPrecompile != START_NOTHING )
       {
-         wxMessageDialog MessageBox( this, "There are script errors. Continue?", "Torsion", wxYES_NO | wxNO_DEFAULT | wxICON_EXCLAMATION );
+         wxMessageDialog MessageBox( this, L"There are script errors. Continue?", L"Torsion", wxYES_NO | wxNO_DEFAULT | wxICON_EXCLAMATION );
 		   if ( MessageBox.ShowModal() != wxID_YES )
             return;
       }
@@ -1251,15 +1251,15 @@ void MainFrame::OnPrecompileDone( wxCommandEvent& event )
       // Write the output banner.
       wxASSERT( m_OutputPanel );
       wxString temp;
-      temp << "\n" << m_ProjectDoc->GetName() << " - " << 
-            scripts << " scripts(s), " <<
-            errors << " error(s)\r\n";
+      temp << L"\n" << m_ProjectDoc->GetName() << L" - " << 
+            scripts << L" scripts(s), " <<
+            errors << L" error(s)\r\n";
       m_OutputPanel->AppendText( temp );
 
       // Do we need to warn?
       if ( errors > 0 && m_AfterPrecompile != START_NOTHING )
       {
-         wxMessageDialog MessageBox( this, "There were script errors. Continue?", "Torsion", wxYES_NO | wxNO_DEFAULT | wxICON_EXCLAMATION );
+         wxMessageDialog MessageBox( this, L"There were script errors. Continue?", L"Torsion", wxYES_NO | wxNO_DEFAULT | wxICON_EXCLAMATION );
 		   if ( MessageBox.ShowModal() != wxID_YES )
             return;
       }
@@ -1299,7 +1299,7 @@ void MainFrame::OnPrecompileStop( wxCommandEvent& event )
    m_PreCompilerStopping = false;
 
    wxASSERT( m_OutputPanel );
-   m_OutputPanel->AppendText( "\r\nPrecompile cancelled\r\n" );
+   m_OutputPanel->AppendText( L"\r\nPrecompile cancelled\r\n" );
 }
 
 void MainFrame::OnUpdatePrecompile( wxUpdateUIEvent& event )
@@ -1525,12 +1525,12 @@ public:
       wxString temp;
       if ( wxFileName::FileExists( script ) && wxRemoveFile( filename ) ) 
       {
-         temp << "Deleted " << filename << "\r\n";
+         temp << L"Deleted " << filename << L"\r\n";
          m_Ctrl->AppendText( temp );
       }
       else
       {
-         temp << "Skipped " << filename << "\r\n";
+         temp << L"Skipped " << filename << L"\r\n";
          m_Ctrl->AppendText( temp );
          ++m_Skipped;
       }
@@ -1554,19 +1554,19 @@ void MainFrame::OnClearDSOs( wxCommandEvent& event )
 	m_OutputPanel->Clear();
    m_BottomNotebook->SetSelection( 0 );
 
-   m_OutputPanel->AppendText( "Deleting compiled scripts...\r\n\r\n" );
+   m_OutputPanel->AppendText( L"Deleting compiled scripts...\r\n\r\n" );
 
    wxASSERT( GetProjectDoc() );
    DeleteDSOsTraverser sink( m_OutputPanel );
 	wxDir dir( GetProjectDoc()->GetWorkingDir() );
 	if ( dir.IsOpened() ) 
-		dir.Traverse( sink, "*.*", wxDIR_DIRS | wxDIR_FILES );
+		dir.Traverse( sink, L"*.*", wxDIR_DIRS | wxDIR_FILES );
 
    wxString temp;
-   temp << "\n" << GetProjectDoc()->GetName() << " - " <<
-         sink.m_Files << " compiled script(s), " << 
-         ( sink.m_Files - sink.m_Skipped ) << " deleted, " <<
-         sink.m_Skipped << " skipped\r\n";
+   temp << L"\n" << GetProjectDoc()->GetName() << L" - " <<
+         sink.m_Files << L" compiled script(s), " << 
+         ( sink.m_Files - sink.m_Skipped ) << L" deleted, " <<
+         sink.m_Skipped << L" skipped\r\n";
    m_OutputPanel->AppendText( temp );
 }
 
@@ -1587,12 +1587,12 @@ void MainFrame::OnClearDSO( wxCommandEvent& event )
    wxString temp;
    if ( wxRemoveFile( file ) ) 
    {
-      temp << "Deleted " << file << "\r\n";
+      temp << L"Deleted " << file << L"\r\n";
       m_OutputPanel->AppendText( temp );
    }
    else 
    {
-      temp << "Failed Deleting " << file << "!\r\n";
+      temp << L"Failed Deleting " << file << L"!\r\n";
       m_OutputPanel->AppendText( temp );
    }
 }
@@ -1772,7 +1772,7 @@ void MainFrame::OnFindSymbol( wxCommandEvent& event )
    if ( paths.IsEmpty() )
    {
       tsBellEx( wxICON_INFORMATION );
-      SetStatusText( "The specified symbol was not found." );
+      SetStatusText( L"The specified symbol was not found." );
       return;
    }
 
@@ -1940,8 +1940,8 @@ ScriptView* MainFrame::OpenFile( const wxString& FullPath, int ZeroBasedLine )
       if ( !wxFileName::FileExists( absolutePath ) ) 
       {
          wxString msg;
-         msg << "The file '" << absolutePath << "' does not exist!";
-         wxMessageDialog dlg( this, msg, "Torsion", wxOK | wxICON_STOP );
+         msg << L"The file '" << absolutePath << L"' does not exist!";
+         wxMessageDialog dlg( this, msg, L"Torsion", wxOK | wxICON_STOP );
          dlg.ShowModal();
          return NULL;
       }
@@ -1952,13 +1952,13 @@ ScriptView* MainFrame::OpenFile( const wxString& FullPath, int ZeroBasedLine )
       if ( !docMan->FindTemplateForPath( absolutePath ) ) 
       {
          // Let the shell open it or alternatively "Open With"....
-         if (  tsExecuteVerb( absolutePath, "edit", true ) ||
+         if (  tsExecuteVerb( absolutePath, L"edit", true ) ||
                tsShellOpenAs( absolutePath ) )
             return NULL;
 
          wxString msg;
-         msg << "The file '" << absolutePath << "' is not a script or text file type!";
-         wxMessageDialog dlg( this, msg, "Torsion", wxOK | wxICON_STOP );
+         msg << L"The file '" << absolutePath << L"' is not a script or text file type!";
+         wxMessageDialog dlg( this, msg, L"Torsion", wxOK | wxICON_STOP );
          dlg.ShowModal();
          return NULL;
       }
@@ -1967,8 +1967,8 @@ ScriptView* MainFrame::OpenFile( const wxString& FullPath, int ZeroBasedLine )
       if ( !doc ) 
       {
          wxString msg;
-         msg << "The file '" << absolutePath << "' could not be opened!";
-         wxMessageDialog dlg( this, msg, "Torsion", wxOK | wxICON_STOP );
+         msg << L"The file '" << absolutePath << L"' could not be opened!";
+         wxMessageDialog dlg( this, msg, L"Torsion", wxOK | wxICON_STOP );
          dlg.ShowModal();
          return NULL;
       } 
@@ -2008,7 +2008,7 @@ ScriptView* MainFrame::GetActiveView() const
 
 void MainFrame::OnDropFiles( wxDropFilesEvent& event )
 {
-   wxString msg = "The following files were unrecongnized and not opened:\n";
+   wxString msg = L"The following files were unrecongnized and not opened:\n";
    bool unopened = false;
    for ( int i=0; i < event.GetNumberOfFiles(); i++ ) {
 
@@ -2017,14 +2017,14 @@ void MainFrame::OnDropFiles( wxDropFilesEvent& event )
             tsGetPrefs().IsTextFile( file.GetFullPath() ) )
          OpenFile( file.GetFullPath() );
       else {
-         msg += "\n\t" + file.GetFullName();
+         msg += L"\n\t" + file.GetFullName();
          unopened = true;
       }
    }
 
    if ( unopened ) {
 
-      wxMessageDialog dlg( this, msg, "Drop Files", wxOK | wxICON_WARNING );
+      wxMessageDialog dlg( this, msg, L"Drop Files", wxOK | wxICON_WARNING );
       dlg.ShowModal();
    }
 }
@@ -2243,7 +2243,7 @@ void MainFrame::UpdateDebugMenu()
       m_DebugMenu->SetLabel( tsID_DEBUG_START, _T( "&Start" ) );
       m_DebugMenu->SetLabel( tsID_DEBUG_BREAK, _T( "&Continue\tF5" ) );
 
-      if ( m_StartToolButton->GetLabel() == "Break" ) {
+      if ( m_StartToolButton->GetLabel() == L"Break" ) {
 
          Realize = true;
          m_StartToolButton->SetNormalBitmap( ts_start16 );
@@ -2256,7 +2256,7 @@ void MainFrame::UpdateDebugMenu()
 
       if (  tsGetDebugger()->IsRunning() ) {
 
-         if ( m_StartToolButton->GetLabel() != "Break" ) {
+         if ( m_StartToolButton->GetLabel() != L"Break" ) {
 
             Realize = true;
             m_StartToolButton->SetNormalBitmap( ts_break16 );
@@ -2267,7 +2267,7 @@ void MainFrame::UpdateDebugMenu()
          
       } else {
 
-         if ( m_StartToolButton->GetLabel() == "Break" ) {
+         if ( m_StartToolButton->GetLabel() == L"Break" ) {
             Realize = true;
             m_StartToolButton->SetNormalBitmap( ts_start16 );
          }
@@ -2305,7 +2305,7 @@ void MainFrame::OnDebugStart( wxCommandEvent& event )
    wxString configName = m_ConfigComboBox->GetValue();
    const ProjectConfig* config = GetProjectDoc()->GetConfig( configName );
 
-   StartDebug( "CONTINUE", config && config->Precompile() );
+   StartDebug( L"CONTINUE", config && config->Precompile() );
 }
 
 void MainFrame::StartDebug( const wxString& command, bool doPrecompile )
@@ -2345,7 +2345,7 @@ void MainFrame::StartDebug( const wxString& command, bool doPrecompile )
 
 void MainFrame::OnDebugStartWithoutDebugging( wxCommandEvent& event )
 {
-	wxASSERT( GetProjectDoc() );
+   wxASSERT( GetProjectDoc() );
    wxASSERT( m_ConfigComboBox );
 
    wxString configName = m_ConfigComboBox->GetValue();
@@ -2385,9 +2385,9 @@ void MainFrame::StartRun( bool doPrecompile )
    wxString args  = config->GetArgs();
 
    // Launch the executable!
-   if ( !tsShellExecute::execDeatched( "open", cwd, exe, args, tsSW_SHOWNORMAL ) )
+   if ( !tsShellExecute::execDeatched( L"open", cwd, exe, args, tsSW_SHOWNORMAL ) )
    {
-		wxMessageDialog MessageBox( this, "Failed launching executable!", "Error", wxOK );
+		wxMessageDialog MessageBox( this, L"Failed launching executable!", L"Error", wxOK );
 		MessageBox.ShowModal();
 	}
 }
@@ -2466,7 +2466,7 @@ void MainFrame::OnDebugStep( wxCommandEvent& event )
       wxString configName = m_ConfigComboBox->GetValue();
       const ProjectConfig* config = GetProjectDoc()->GetConfig( configName );
 
-      StartDebug( "STEPIN", config && config->Precompile() );
+      StartDebug( L"STEPIN", config && config->Precompile() );
       return;
    }
 
@@ -2489,7 +2489,7 @@ void MainFrame::OnDebugStepOver( wxCommandEvent& event )
       wxString configName = m_ConfigComboBox->GetValue();
       const ProjectConfig* config = GetProjectDoc()->GetConfig( configName );
 
-      StartDebug( "STEPIN", config && config->Precompile() );
+      StartDebug( L"STEPIN", config && config->Precompile() );
       return;
    }
 
@@ -2680,11 +2680,11 @@ void MainFrame::UpdateTitle()
    // Add the project title!
 	ProjectDoc* Project = GetProjectDoc();
 	if ( Project ) {
-  		Title << Project->GetName() << " - Torsion";
+  		Title << Project->GetName() << L" - Torsion";
 	}
    else
    {
-      Title << "Torsion";
+      Title << L"Torsion";
    }
 
    // Add the mode.
@@ -2694,11 +2694,11 @@ void MainFrame::UpdateTitle()
 
 		if ( tsGetDebugger()->IsAtBreakpoint() ) {
 
-			Title << " [breakpoint]";
+			Title << L" [breakpoint]";
 
 		} else if ( tsGetDebugger()->IsRunning() ) {
 			
-			Title << " [running]";
+			Title << L" [running]";
 
 		} else {
 
@@ -2751,9 +2751,9 @@ void MainFrame::OnUpdateCheck( wxCommandEvent& event )
 void MainFrame::OnBugTracker( wxCommandEvent& event )
 {
    if ( event.GetId() == tsID_FEATUREREQUEST )
-      wxLaunchDefaultBrowser( "http://mantis.sickheadgames.com/bug_report_page.php?project_id=6" );
+      wxLaunchDefaultBrowser( L"http://mantis.sickheadgames.com/bug_report_page.php?project_id=6" );
    else
-      wxLaunchDefaultBrowser( "http://mantis.sickheadgames.com/bug_report_page.php?project_id=2" );
+      wxLaunchDefaultBrowser( L"http://mantis.sickheadgames.com/bug_report_page.php?project_id=2" );
 }
 
 void MainFrame::OnDebugCallTip( const wxString& Expression, const wxString& Value )

@@ -923,6 +923,7 @@
     <ClCompile Include="..\..\src\stc\scintilla\src\XPM.cxx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\stc\helper.h" />
     <ClInclude Include="..\..\src\stc\PlatWX.h" />
     <ClInclude Include="..\..\src\stc\ScintillaWX.h" />
     <ClInclude Include="..\..\include\wx\stc\stc.h" />

@@ -65,8 +65,8 @@ shNotebook::shNotebook( wxWindow* parent, wxWindowID id, const wxPoint& pos, con
       m_TabFont( NULL ),
       m_TabFontBold( NULL )
 {
-   m_TabFont = wxTheFontList->FindOrCreateFont( 8, wxDEFAULT, wxNORMAL, wxNORMAL, false, "Tahoma" );
-   m_TabFontBold = wxTheFontList->FindOrCreateFont( 8, wxDEFAULT, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Tahoma" );
+   m_TabFont = wxTheFontList->FindOrCreateFont( 8, wxDEFAULT, wxNORMAL, wxNORMAL, false, L"Tahoma" );
+   m_TabFontBold = wxTheFontList->FindOrCreateFont( 8, wxDEFAULT, wxNORMAL, wxFONTWEIGHT_BOLD, false, L"Tahoma" );
 
    m_ScrollTimer.SetOwner( this, 0 );
    m_ToolTipTimer.SetOwner( this, 1 );
@@ -514,11 +514,11 @@ void shNotebook::OnMouseMove( wxMouseEvent& event )
          m_HoveredButton = hit;
 
          if ( m_HoveredButton == 0 ) 
-            tooltip = "Close";
+            tooltip = L"Close";
          else if ( m_HoveredButton == 1 )
-            tooltip = "Scroll Right";
+            tooltip = L"Scroll Right";
          else if ( m_HoveredButton == 2 )
-            tooltip = "Scroll Left";
+            tooltip = L"Scroll Left";
       } 
 
       if ( hit > -1 && flags & shNB_HITTEST_ONITEM ) {
@@ -677,7 +677,7 @@ void shNotebook::OnSize( wxSizeEvent& event )
    wxWindowDC dc( this );
    wxCoord w, h;
    dc.SetFont( *m_TabFont );
-   dc.GetTextExtent( "ABCDEFG", &w, &h );
+   dc.GetTextExtent( L"ABCDEFG", &w, &h );
    dc.SetFont( wxNullFont );
 
    wxSize newSize = GetClientSize();

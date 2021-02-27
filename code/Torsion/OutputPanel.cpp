@@ -167,7 +167,7 @@ void OutputPanel::CreateControls()
 
    m_Output->SetBestFittingSize( wxSize( 0, 0 ) );
 
-   m_ErrorText = new wxStaticText( m_ToolBar, tsID_OUTPUT_ERRORS, "No Errors!" ); //, wxDefaultPosition, wxDefaultSize, ( toolBar, tsID_CONFIGCOMBO, "", wxDefaultPosition, wxSize( 160, wxDefaultCoord), 0, NULL, wxSTATIC_BORDER | wxCB_DROPDOWN | wxCB_READONLY | wxCB_SORT );
+   m_ErrorText = new wxStaticText( m_ToolBar, tsID_OUTPUT_ERRORS, L"No Errors!" ); //, wxDefaultPosition, wxDefaultSize, ( toolBar, tsID_CONFIGCOMBO, "", wxDefaultPosition, wxSize( 160, wxDefaultCoord), 0, NULL, wxSTATIC_BORDER | wxCB_DROPDOWN | wxCB_READONLY | wxCB_SORT );
    m_ToolBar->AddControl( m_ErrorText );
    m_ToolBar->AddSeparator();
    m_ToolBar->AddTool( tsID_OUTPUT_PREVERROR, _T( "Previous Error" ), ts_errorprev16, _T( "Previous Error" ) );
@@ -253,9 +253,9 @@ void OutputPanel::OnClear( wxCommandEvent& event )
 
 void OutputPanel::OnSaveFile( wxCommandEvent& event )
 {
-   wxString path = wxFileSelector( "Choose a name for this log", 
+   wxString path = wxFileSelector( L"Choose a name for this log", 
       wxEmptyString, wxEmptyString, wxEmptyString, 
-      "Log files (*.log)|*.log|Text files (*.txt)|*.txt",
+      L"Log files (*.log)|*.log|Text files (*.txt)|*.txt",
       wxSAVE | wxOVERWRITE_PROMPT, this );
    
    if ( path.IsEmpty() )
@@ -268,9 +268,9 @@ void OutputPanel::OnSaveFile( wxCommandEvent& event )
 
 void OutputPanel::OnLoadFile( wxCommandEvent& event )
 {
-   wxString path = wxFileSelector( "Choose a log file to open", 
+   wxString path = wxFileSelector( L"Choose a log file to open", 
       wxEmptyString, wxEmptyString, wxEmptyString, 
-      "Log files (*.log)|*.log|Text files (*.txt)|*.txt",
+      L"Log files (*.log)|*.log|Text files (*.txt)|*.txt",
       wxOPEN | wxFILE_MUST_EXIST, this );
    
    if ( path.IsEmpty() )
@@ -296,7 +296,7 @@ void OutputPanel::OnLoadFile( wxCommandEvent& event )
    if ( errors.size() > 0 ) 
    {
       wxString text;
-      text << (unsigned int)errors.size() << " Error(s)";
+      text << (unsigned int)errors.size() << L" Error(s)";
       m_ErrorText->SetLabel( text );
       m_ToolBar->Realize();
 
@@ -305,7 +305,7 @@ void OutputPanel::OnLoadFile( wxCommandEvent& event )
       for ( size_t i=0; i < errors.size(); i++ )
       {
          wxString tip;
-         tip << errors[i]->file << "(" << errors[i]->line << ")\r\n" << errors[i]->error;
+         tip << errors[i]->file << L"(" << errors[i]->line << L")\r\n" << errors[i]->error;
          //if ( errors[i]->warning )
          //   m_ScrollMap->AddItem( errors[i]->row, warnColor, tip );
          //else
@@ -325,7 +325,7 @@ void OutputPanel::Clear()
    wxASSERT( m_ScrollMap );
    m_ScrollMap->SetRange( 0 );
    wxASSERT( m_ErrorText );
-   m_ErrorText->SetLabel( "No Errors!" );
+   m_ErrorText->SetLabel( L"No Errors!" );
    m_ToolBar->Realize();
 }
 
@@ -345,14 +345,14 @@ void OutputPanel::AppendText( const wxString& text )
    if ( prev != errors.size() ) 
    {
       wxString text;
-      text << (int)errors.size() << " Error(s)";
+      text << (int)errors.size() << L" Error(s)";
       m_ErrorText->SetLabel( text );
       m_ToolBar->Realize();
 
       for ( size_t i=prev; i < errors.size(); i++ )
       {
          wxString tip;
-         tip << errors[i]->file << "(" << errors[i]->line << ")\n" << errors[i]->error;
+         tip << errors[i]->file << L"(" << errors[i]->line << L")\n" << errors[i]->error;
          m_ScrollMap->AddItem( errors[i]->row, *wxRED, tip );
       }
    }

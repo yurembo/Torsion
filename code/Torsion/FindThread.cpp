@@ -135,12 +135,12 @@ void* FindThreadInternal::Entry()
 {
    if ( m_Paths.IsEmpty() || m_What.IsEmpty() || m_Types.IsEmpty() ) 
    {
-      WriteLine( "Invalid find parameters!" );
+      WriteLine( L"Invalid find parameters!" );
       return NULL;
    }
 
    wxString output;
-   output << "Find \"" << m_What << "\" in files of type(s) \"" << m_Types << "\" in \"" << m_Paths[0] << "\"";
+   output << L"Find \"" << m_What << L"\" in files of type(s) \"" << m_Types << L"\" in \"" << m_Paths[0] << L"\"";
    WriteLine( output );
 
    m_Results = 0;
@@ -149,7 +149,7 @@ void* FindThreadInternal::Entry()
 
    // Grab the list of filespecs.
    wxArrayString Filespecs;
-   wxStringTokenizer toker( m_Types, ";," );
+   wxStringTokenizer toker( m_Types, L";," );
    while ( toker.HasMoreTokens() ) {
 
       wxString filespec = toker.NextToken();
@@ -159,7 +159,7 @@ void* FindThreadInternal::Entry()
    }
 
    wxCommandEvent event( tsEVT_FIND_STATUS );
-   event.SetString( "Scanning..." );
+   event.SetString( L"Scanning..." );
    wxPostEvent( m_EvtHandler, event );
 
    // Do the enumeration on each path!
@@ -180,15 +180,15 @@ void* FindThreadInternal::Entry()
    if ( done ) {
 
       output.Clear();
-      output << "Results: " << m_Results << "    In Files: " << m_Infiles << "    Searched Files: " << m_TotalFiles;
+      output << L"Results: " << m_Results << L"    In Files: " << m_Infiles << L"    Searched Files: " << m_TotalFiles;
       WriteLine( output );
 
    } else {
 
-      WriteLine( "Operation cancled!" );
+      WriteLine( L"Operation cancled!" );
    }
 
-   event.SetString( "" );
+   event.SetString( L"" );
    wxPostEvent( m_EvtHandler, event );
 
    return NULL;
@@ -197,7 +197,7 @@ void* FindThreadInternal::Entry()
 void FindThreadInternal::WriteLine( const wxString& text )
 {
    wxCommandEvent event( tsEVT_FIND_OUTPUT );
-   event.SetString( text + "\r\n" );
+   event.SetString( text + L"\r\n" );
    wxPostEvent( m_EvtHandler, event );
 }
 
@@ -255,7 +255,7 @@ bool FindThreadInternal::OnFile( const wxString& filename )
    bool Found = false;
 
    wxCommandEvent event( tsEVT_FIND_STATUS );
-   event.SetString( wxString( "Scanning " ) << filename << "..." );
+   event.SetString( wxString( L"Scanning " ) << filename << L"..." );
    wxPostEvent( m_EvtHandler, event );
 
    // Search for a match in this file.
@@ -265,7 +265,7 @@ bool FindThreadInternal::OnFile( const wxString& filename )
    }
    wxTextInputStream text( input );
    
-   const wxString Seps = " \t.,\"'\\/|[]{}:;<>()-+*^";
+   const wxString Seps = L" \t.,\"'\\/|[]{}:;<>()-+*^";
    int LineCount = 1;
    int Pos, Next;
    wxString Line;
@@ -299,7 +299,7 @@ bool FindThreadInternal::OnFile( const wxString& filename )
 
          Found = true;
          Output.Clear();
-         Output << filename << "(" << LineCount << "):   " << Line;
+         Output << filename << L"(" << LineCount << L"):   " << Line;
          WriteLine( Output );
          ++m_Results;
       }

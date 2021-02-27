@@ -47,7 +47,7 @@ void XmlFile::AddPointElem( const wxString& name, const wxPoint& value )
 
 bool XmlFile::GetBoolElem( const wxString& name, bool value )
 {
-   return StringToBool( GetStringElem( name, value ? "true" : "false" ) );
+   return StringToBool( GetStringElem( name, value ? L"true" : L"false" ) );
 }
 
 void XmlFile::AddBoolElem( const wxString& name, bool value )
@@ -104,13 +104,13 @@ wxColour XmlFile::GetColorAttrib( const wxString& element, const wxString& attri
 wxString XmlFile::ColorToString( const wxColour& color )
 {
 	wxString Result;
-   Result << color.Red() << ", " << color.Green() << ", " << color.Blue();
+   Result << color.Red() << L", " << color.Green() << L", " << color.Blue();
 	return Result;
 }
 
 wxColour XmlFile::StringToColor( const wxString& color )
 {
-	wxStringTokenizer Tokenizer( color, "\t\r\n ,;", wxTOKEN_STRTOK );
+	wxStringTokenizer Tokenizer( color, L"\t\r\n ,;", wxTOKEN_STRTOK );
 
 	wxString Token = Tokenizer.GetNextToken();
 	Token.Trim( true );
@@ -138,7 +138,7 @@ wxColour XmlFile::StringToColor( const wxString& color )
 
 wxPoint XmlFile::StringToPoint( const wxString& point )
 {
-	wxStringTokenizer Tokenizer( point, "\t\r\n ,;", wxTOKEN_STRTOK );
+	wxStringTokenizer Tokenizer( point, L"\t\r\n ,;", wxTOKEN_STRTOK );
 	
    wxString Token = Tokenizer.GetNextToken();
 	Token.Trim( true );
@@ -158,17 +158,17 @@ wxPoint XmlFile::StringToPoint( const wxString& point )
 wxString XmlFile::PointToString( const wxPoint& value )
 {
    wxString result;
-   result << value.x << " " << value.y;
+   result << value.x << L" " << value.y;
    return result;
 }
 
 int XmlFile::GetArrayStringElems( wxArrayString& output, const wxString& name, const wxString& elemName )
 {
    int count = -1;
-   if ( FindElem( name ) && IntoElem() ) {
+   if ( FindElem( MCD_CSTR(name) ) && IntoElem() ) {
 
       count = 0;
-      while ( FindElem( elemName ) ) {
+      while ( FindElem( MCD_CSTR(elemName) ) ) {
          output.Add( GetData().c_str() );
          ++count;
       }
@@ -183,10 +183,10 @@ int XmlFile::GetArrayStringElems( wxArrayString& output, const wxString& name, c
 
 void XmlFile::AddArrayStringElems( const wxString& name, const wxString& elemName, const wxArrayString& strings )
 {
-	AddElem( name );
+	AddElem( MCD_CSTR(name ));
 	IntoElem();
    for ( size_t i=0; i < strings.GetCount(); i++ ) {
-      AddElem( elemName, strings[i] );
+      AddElem( MCD_CSTR(elemName), MCD_CSTR(strings[i]) );
    }
    OutOfElem();
 }

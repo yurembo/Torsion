@@ -122,9 +122,9 @@ void GotoDefDialog::CreateControls()
 
 ////@end GotoDefDialog content construction
 
-    m_SymbolList->InsertColumn( 0, "Symbol", wxLIST_FORMAT_LEFT, 200 );
-    m_SymbolList->InsertColumn( 1, "File", wxLIST_FORMAT_LEFT, 210 );
-    m_SymbolList->InsertColumn( 2, "Line", wxLIST_FORMAT_LEFT, 39 );
+    m_SymbolList->InsertColumn( 0, L"Symbol", wxLIST_FORMAT_LEFT, 200 );
+    m_SymbolList->InsertColumn( 1, L"File", wxLIST_FORMAT_LEFT, 210 );
+    m_SymbolList->InsertColumn( 2, L"Line", wxLIST_FORMAT_LEFT, 39 );
 }
 
 int GotoDefDialog::ShowModal( const wxArrayString& paths, const wxArrayInt& lines, const wxArrayString& symbols )

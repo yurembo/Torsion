@@ -82,7 +82,7 @@ CodeBrowserCtrl::CodeBrowserCtrl( wxWindow* parent, wxWindowID id,
 	AssignImageList( TreeImages );
 
    // Add the root now... we won't need to change it.
-   AddRoot( "", -1, -1, new ItemData );
+   AddRoot( L"", -1, -1, new ItemData );
 
    // Add ourselves to the autocomp notification list.
    wxASSERT( tsGetAutoComp() );
@@ -309,7 +309,7 @@ void CodeBrowserCtrl::MergeFunctions( wxTreeItemId parent, const AutoCompFunctio
          wxString fullName = name;
 
          if ( !namespace_.IsEmpty() )
-            fullName = namespace_ + "::" + name;
+            fullName = namespace_ + L"::" + name;
 
          id = AppendItem( sid, parent, fullName, ITYPE_FUNC );
          if ( functions[i]->IsExport() )
@@ -317,7 +317,7 @@ void CodeBrowserCtrl::MergeFunctions( wxTreeItemId parent, const AutoCompFunctio
       }
 
       // Set the name with arguments.
-      name << "(" << functions[i]->GetArgs() << ")";
+      name << L"(" << functions[i]->GetArgs() << L")";
       SetItemText( id, name );
    }
 }
@@ -349,7 +349,7 @@ void CodeBrowserCtrl::MergeVar( wxTreeItemId parent, const AutoCompVar* var )
    {
       //wxASSERT( name.StartsWith( item->name ) );
       name.Remove( 0, item->name.Len() + 2 );
-      parentSid += "/";
+      parentSid += L"/";
       parentName = item->name;
    }
 
@@ -361,7 +361,7 @@ void CodeBrowserCtrl::MergeVar( wxTreeItemId parent, const AutoCompVar* var )
    // Break out the namespaces!
    for ( ;; ) 
    {
-      int sep = name.Find( "::" );
+      int sep = name.Find( L"::" );
       if ( sep != -1 ) 
       {
          MakeSid( &sid, parentSid, name.Left( sep ), type );
@@ -373,7 +373,7 @@ void CodeBrowserCtrl::MergeVar( wxTreeItemId parent, const AutoCompVar* var )
             wxString fullName = fixed;
 
             if ( !parentName.IsEmpty() )
-               fullName = parentName + "::" + fixed;
+               fullName = parentName + L"::" + fixed;
 
             id = AppendItem( sid, parent, fullName, type );
             if ( var->IsExport() )
@@ -384,7 +384,7 @@ void CodeBrowserCtrl::MergeVar( wxTreeItemId parent, const AutoCompVar* var )
 
          parent = id;
          name = name.Mid( sep + 2 );
-         parentSid = sid + "/";
+         parentSid = sid + L"/";
 
          if ( IsExpanded( id ) )
             continue;
@@ -408,7 +408,7 @@ void CodeBrowserCtrl::MergeVar( wxTreeItemId parent, const AutoCompVar* var )
       wxString fullName = name;
 
       if ( !parentName.IsEmpty() )
-         fullName = parentName + "::" + name;
+         fullName = parentName + L"::" + name;
 
       id = AppendItem( sid, parent, fullName, type );
       if ( var->IsExport() )
@@ -858,7 +858,7 @@ void CodeBrowserCtrl::OnSelChanged( wxTreeEvent& event )
    if ( !m_DescCtrl )
       return;
 
-   m_DescCtrl->SetValue( "" );
+   m_DescCtrl->SetValue( L"" );
 
    if ( !event.GetItem().IsOk() )
       return;

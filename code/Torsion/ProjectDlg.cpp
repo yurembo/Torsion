@@ -173,7 +173,7 @@ void ProjectDlg::CreateControls()
 
    // TODO: Fix to refresh colors on system color change!
    wxColor active( wxSystemSettings::GetColour( wxSYS_COLOUR_BTNFACE  ) );
-   wxFont font( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Tahoma" );
+   wxFont font( 8, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma" );
    m_PropGrid->GetGrid()->SetFont( font );
    m_PropGrid->GetGrid()->SetMarginColour( active );
    m_PropGrid->GetGrid()->SetLineColour( active );
@@ -326,28 +326,28 @@ void ProjectDlg::OnOkClick( wxCommandEvent& event )
       return;
    }
 
-   wxString name     = m_PropGrid->GetPropertyValue( "General.Name" );
-   wxString baseDir  = m_PropGrid->GetPropertyValue( "General.Base Directory" );
+   wxString name     = m_PropGrid->GetPropertyValue( L"General.Name" );
+   wxString baseDir  = m_PropGrid->GetPropertyValue( L"General.Base Directory" );
 
    // Verify we got everything.
    if ( name.IsEmpty() ) {
-      wxMessageDialog dlg( this, "You must enter a name for your project!", GetTitle(), wxOK );
+      wxMessageDialog dlg( this, L"You must enter a name for your project!", GetTitle(), wxOK );
       dlg.ShowModal();
       return;
    }
    if ( baseDir.IsEmpty() ) {
-      wxMessageDialog dlg( this, "You must enter a base directory for your project!", GetTitle(), wxOK );
+      wxMessageDialog dlg( this, L"You must enter a base directory for your project!", GetTitle(), wxOK );
       dlg.ShowModal();
       return;
    }
    if ( !wxFileName::DirExists( baseDir ) )
    {
-      wxMessageDialog dlg( this, "The base directory must exist!", GetTitle(), wxOK );
+      wxMessageDialog dlg( this, L"The base directory must exist!", GetTitle(), wxOK );
       dlg.ShowModal();
       return;
    }
    if ( m_Configs.IsEmpty() ) {
-      wxMessageDialog dlg( this, "You must have at least one configuration for your project!", GetTitle(), wxOK );
+      wxMessageDialog dlg( this, L"You must have at least one configuration for your project!", GetTitle(), wxOK );
       dlg.ShowModal();
       return;
    }
@@ -356,19 +356,19 @@ void ProjectDlg::OnOkClick( wxCommandEvent& event )
    wxASSERT( m_Project );
    m_Project->SetName( name );
    m_Project->SetWorkingDir( baseDir );
-   m_Project->SetEntryScript( m_PropGrid->GetPropertyValue( "General.Entry Script" ) );
-   m_Project->SetScannerExtsString( m_PropGrid->GetPropertyValue( "General.Script Scanner Extensions" ) );
-   m_Project->SetModsString( m_PropGrid->GetPropertyValue( "General.Mods" ) );
+   m_Project->SetEntryScript( m_PropGrid->GetPropertyValue( L"General.Entry Script" ) );
+   m_Project->SetScannerExtsString( m_PropGrid->GetPropertyValue( L"General.Script Scanner Extensions" ) );
+   m_Project->SetModsString( m_PropGrid->GetPropertyValue( L"General.Mods" ) );
 
-   m_Project->SetAddress( m_PropGrid->GetPropertyValue( "Debugging.Address" ) );
-   m_Project->SetPort( m_PropGrid->GetPropertyValue( "Debugging.Port" ).GetLong() );
-   m_Project->SetPassword( m_PropGrid->GetPropertyValue( "Debugging.Password" ) );
-   m_Project->SetExecModifiedScripts( m_PropGrid->GetPropertyValueAsBool( "Debugging.Reload Modified Scripts" ) );
-   m_Project->SetDebugHook( m_PropGrid->GetPropertyValue( "Debugging.Hook Code" ) );
+   m_Project->SetAddress( m_PropGrid->GetPropertyValue( L"Debugging.Address" ) );
+   m_Project->SetPort( m_PropGrid->GetPropertyValue( L"Debugging.Port" ).GetLong() );
+   m_Project->SetPassword( m_PropGrid->GetPropertyValue( L"Debugging.Password" ) );
+   m_Project->SetExecModifiedScripts( m_PropGrid->GetPropertyValueAsBool( L"Debugging.Reload Modified Scripts" ) );
+   m_Project->SetDebugHook( m_PropGrid->GetPropertyValue( L"Debugging.Hook Code" ) );
    
-   m_Project->SetSearchUrl( m_PropGrid->GetPropertyValue( "Elixir.Search URL" ) );
-   m_Project->SetSearchProduct( m_PropGrid->GetPropertyValue( "Elixir.Product" ) );
-   m_Project->SetSearchVersion( m_PropGrid->GetPropertyValue( "Elixir.Version" ) );
+   m_Project->SetSearchUrl( m_PropGrid->GetPropertyValue( L"Elixir.Search URL" ) );
+   m_Project->SetSearchProduct( m_PropGrid->GetPropertyValue( L"Elixir.Product" ) );
+   m_Project->SetSearchVersion( m_PropGrid->GetPropertyValue( L"Elixir.Version" ) );
    m_Project->SetConfigs( m_Configs );
 
    wxDialog::OnOK( event );
@@ -398,7 +398,7 @@ void ProjectDlg::OnEditClick( wxCommandEvent& event )
    if ( dlg.ShowModal( 
       config, 
       &m_Configs, 
-      m_PropGrid->GetPropertyValue( "General.Base Directory" ) ) == wxID_OK ) 
+      m_PropGrid->GetPropertyValue( L"General.Base Directory" ) ) == wxID_OK ) 
    {
       m_ConfigModified = true;
       m_RebuildExports =   config->GetName() != name ||
@@ -423,7 +423,7 @@ void ProjectDlg::OnNewClick( wxCommandEvent& event )
    if ( dlg.ShowModal(  
       &config, 
       &m_Configs, 
-      m_PropGrid->GetPropertyValue( "General.Base Directory" ) ) == wxID_OK ) 
+      m_PropGrid->GetPropertyValue( L"General.Base Directory" ) ) == wxID_OK ) 
    {
       m_Configs.Add( config );
       m_ConfigModified = true;
@@ -465,7 +465,7 @@ void ProjectDlg::OnCopyClick( wxCommandEvent& event )
 
    wxASSERT( sel >= 0 && sel < m_Configs.GetCount() );
    ProjectConfig config = m_Configs[sel];
-   config.SetName( "" );
+   config.SetName( L"" );
 
    // Spawn the new config dialog.
    wxASSERT( m_PropGrid );
@@ -473,7 +473,7 @@ void ProjectDlg::OnCopyClick( wxCommandEvent& event )
    if ( dlg.ShowModal(  
       &config, 
       &m_Configs, 
-      m_PropGrid->GetPropertyValue( "General.Base Directory" ) ) == wxID_OK ) 
+      m_PropGrid->GetPropertyValue( L"General.Base Directory" ) ) == wxID_OK ) 
    {
       m_Configs.Add( config );
       m_ConfigModified = true;

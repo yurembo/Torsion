@@ -26,9 +26,9 @@ wxString CallTipInfo::FormatTip( const wxString& tip, int tabSize )
 
    // Fix up newlines, convert tabs to spaces, 
    // and trim any whitespace.
-   cleaned.Replace( "\r\n", "\n" );
-   cleaned.Replace( "\r", "\n" );
-   cleaned.Replace( "\t", wxString( ' ', tabSize ) );
+   cleaned.Replace( L"\r\n", L"\n" );
+   cleaned.Replace( L"\r", L"\n" );
+   cleaned.Replace( L"\t", wxString( ' ', size_t(tabSize) ) );
    cleaned.Trim(); cleaned.Trim( false ); 
 
    // Clean up long lines by breaking them if they are
@@ -49,10 +49,10 @@ wxString CallTipInfo::FormatTip( const wxString& tip, int tabSize )
             break;
          line = line.Mid( newLine.Len() );
          line.Trim( false );
-         result += newLine + '\n';
+         result += newLine + L'\n';
       }
                  
-      result += line + '\n';
+      result += line + L'\n';
    }
    result.Trim(); result.Trim( false ); 
 
@@ -138,7 +138,7 @@ void CallTipInfo::RemoveThis()
 
    // Read it...
    wxString param = m_Tip.Mid( start, end - start );
-   if ( param.CmpNoCase( "%this" ) != 0 )
+   if ( param.CmpNoCase( L"%this" ) != 0 )
       return;
 
    // Remove it.

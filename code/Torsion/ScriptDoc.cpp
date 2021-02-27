@@ -13,6 +13,8 @@
 #include "AutoCompText.h"
 #include "ScriptCtrl.h"
 
+#include "helper.h"
+
 
 #ifdef _DEBUG 
    #define new DEBUG_NEW 
@@ -55,7 +57,8 @@ void ScriptDoc::OnAutoCompHint( bool enabled )
       {
          int length = view->GetCtrl()->GetTextLength();
          wxChar* buffer = m_TextBuffer->GetWriteBuf( length );
-         view->GetCtrl()->GetTextRangeRaw( buffer, 0, -1 );
+		 _bstr_t buf(buffer);
+		 view->GetCtrl()->GetTextRangeRaw( buf, 0, -1 );
       }
       m_TextBuffer->Unlock();
    }
@@ -189,7 +192,7 @@ bool ScriptDoc::OnNewDocument()
    SetDocumentSaved(false);
 
    wxString name;
-   name << "Script" << s_NewDocCounter++;
+   name << L"Script" << s_NewDocCounter++;
    SetTitle(name);
    SetFilename(wxEmptyString, true);
 

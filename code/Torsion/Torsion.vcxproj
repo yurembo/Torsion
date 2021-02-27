@@ -48,6 +48,8 @@
     <OutDir>..\..\Media\</OutDir>
     <IntDir>Release\</IntDir>
     <LinkIncremental>false</LinkIncremental>
+    <EmbedManifest>true</EmbedManifest>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -88,9 +90,10 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>comctl32.lib;wxbase26.lib;wxmsw26_core.lib;wxmsw26_adv.lib;wxbase26_net.lib;wxmsw26_stc.lib;wxmsw27_propgrid.lib;wxregex.lib;wxjpeg.lib;Ws2_32.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;wxbase26u.lib;wxmsw26u_core.lib;wxmsw26u_adv.lib;wxbase26u_net.lib;wxmsw26_stc.lib;wxregexu.lib;wxjpeg.lib;Ws2_32.lib;Rpcrt4.lib;wxmsw26u_dbgrid.lib;wxexpat.lib;wxmsw26_media.lib;wxmsw26u_gl.lib;wxmsw26u_xrc.lib;wxmsw26u_html.lib;wxmsw26u_qa.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)torsion.exe</OutputFile>
       <AdditionalLibraryDirectories>..\wxWidgets\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -122,6 +125,7 @@
     <ClInclude Include="AutoCompVar.h" />
     <ClInclude Include="BuildExportsThread.h" />
     <ClInclude Include="CallTipInfo.h" />
+    <ClInclude Include="helper.h" />
     <ClInclude Include="Markup\Markup.h" />
     <ClInclude Include="ScriptScanner.h" />
     <ClInclude Include="Icons.h" />

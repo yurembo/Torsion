@@ -27,8 +27,8 @@ AutoCompThread::AutoCompThread()
       m_UpdateExports( false ),
       m_Data( NULL )
 {
-   m_Excluded.Add( ".svn" );
-   m_Excluded.Add( "cvs" );
+   m_Excluded.Add( L".svn" );
+   m_Excluded.Add( L"cvs" );
 }
 
 AutoCompThread::~AutoCompThread()
@@ -148,7 +148,7 @@ bool AutoCompThread::ScanPath( const wxString& path,
    for ( int i=0; i < scriptExts.GetCount(); i++ ) 
    {
       wxString spec;
-      spec << "*." << scriptExts[i];
+      spec << L"*." << scriptExts[i];
 
       wxString filename;
       wxDateTime lastUpdate;
@@ -233,14 +233,14 @@ AutoCompPage* AutoCompThread::ScanFile( const wxString& path, ScriptScanner& sc 
       // Grab the value for processing below.
       if ( sc.GetToken() == SSTOKEN_COMMENT )
       {
-         if (  sc.GetValue().StartsWith( "///" ) ||
-               sc.GetValue().StartsWith( "//!" ) ||
-               sc.GetValue().StartsWith( "/*!" ) ||
-               sc.GetValue().StartsWith( "/**" ) ) 
+         if (  sc.GetValue().StartsWith( L"///" ) ||
+               sc.GetValue().StartsWith( L"//!" ) ||
+               sc.GetValue().StartsWith( L"/*!" ) ||
+               sc.GetValue().StartsWith( L"/**" ) ) 
          {
             // Add it, but strip the comment marks.
             Comment << sc.GetValue().Mid( 3 );
-            int end = Comment.Find( "*/" );
+            int end = Comment.Find( L"*/" );
             if ( end != -1 )
             {
                Comment = Comment.Mid( 0, end );
@@ -293,7 +293,7 @@ AutoCompPage* AutoCompThread::ScanFile( const wxString& path, ScriptScanner& sc 
       else if (   objects.size() > 0 && 
                   (  sc.GetToken() == SSTOKEN_RESERVED || 
                      sc.GetToken() == SSTOKEN_WORD ) &&
-                  ( sc.GetValue() != "new" && sc.GetValue() != "singleton" ) ) 
+                  ( sc.GetValue() != L"new" && sc.GetValue() != L"singleton" ) ) 
       {
             wxASSERT( objects.top() );
             objects.top()->AddVar( sc.GetValue() )->AddLine( path, sc.GetLine() );
@@ -307,7 +307,7 @@ AutoCompPage* AutoCompThread::ScanFile( const wxString& path, ScriptScanner& sc 
       }
 
       else if ( sc.GetToken() == SSTOKEN_RESERVED && 
-               ( sc.GetValue() == "new" || sc.GetValue() == "singleton" ) )
+               ( sc.GetValue() == L"new" || sc.GetValue() == L"singleton" ) )
       {
          // Grab the object type.
          if ( sc.Step() != SSTOKEN_WORD )
@@ -320,7 +320,7 @@ AutoCompPage* AutoCompThread::ScanFile( const wxString& path, ScriptScanner& sc 
             goto SKIP_STEP;
 
          // Check for the local keyword.
-         bool isLocal = sc.Step() == SSTOKEN_RESERVED && sc.GetValue() == "local";
+         bool isLocal = sc.Step() == SSTOKEN_RESERVED && sc.GetValue() == L"local";
          if ( isLocal )
             sc.Step();
 
@@ -362,7 +362,7 @@ AutoCompPage* AutoCompThread::ScanFile( const wxString& path, ScriptScanner& sc 
          ++bracket;
       }
 
-      else if ( sc.GetToken() == SSTOKEN_RESERVED && sc.GetValue() == "function" ) 
+      else if ( sc.GetToken() == SSTOKEN_RESERVED && sc.GetValue() == L"function" ) 
       {
          // Grab the function name.
          if ( sc.Step() != SSTOKEN_WORD )
@@ -396,7 +396,7 @@ AutoCompPage* AutoCompThread::ScanFile( const wxString& path, ScriptScanner& sc 
                function->AddVar( sc.GetValue() )->AddLine( path, sc.GetLine() );
 
                if ( sc.Step() == SSTOKEN_SYMBOL && sc.GetValue() == ',' ) {
-                  Args << ", ";
+                  Args << L", ";
                   continue;
                }
             }
@@ -419,7 +419,7 @@ AutoCompPage* AutoCompThread::ScanFile( const wxString& path, ScriptScanner& sc 
          ++bracket;
       }
 
-      else if ( sc.GetToken() == SSTOKEN_RESERVED && sc.GetValue() == "datablock" && bracket == 0 ) 
+      else if ( sc.GetToken() == SSTOKEN_RESERVED && sc.GetValue() == L"datablock" && bracket == 0 ) 
       {
          // Grab the base name.
          if ( sc.Step() != SSTOKEN_WORD )
@@ -476,9 +476,9 @@ AutoCompPage* AutoCompThread::ScanFile( const wxString& path, ScriptScanner& sc 
             // A comment above the var?
             if ( sc.GetToken() == SSTOKEN_COMMENT ) {
 
-               if (  sc.GetValue().StartsWith( "///" ) ||
-                     sc.GetValue().StartsWith( "//!" ) ||
-                     sc.GetValue().StartsWith( "/*!" ) ) {
+               if (  sc.GetValue().StartsWith( L"///" ) ||
+                     sc.GetValue().StartsWith( L"//!" ) ||
+                     sc.GetValue().StartsWith( L"/*!" ) ) {
 
                   // Add it, but strip the comment marks.
                   Comment << sc.GetValue().Mid( 3 );
@@ -499,7 +499,7 @@ AutoCompPage* AutoCompThread::ScanFile( const wxString& path, ScriptScanner& sc 
             Comment.Empty();
 
             // Wait for the end of the assignment.
-            while ( sc.Step() != SSTOKEN_EOF && sc.GetValue() != ";" ) {}
+            while ( sc.Step() != SSTOKEN_EOF && sc.GetValue() != L";" ) {}
 
             // TODO: Look for trailing comments that 
             // need to apply to the current var!
@@ -563,8 +563,8 @@ AutoCompPage* AutoCompThread::ScanFile( const wxString& path, ScriptScanner& sc 
          while ( sc.Step() != SSTOKEN_EOF ) 
          {
             if (  sc.GetToken() == SSTOKEN_RESERVED && 
-                  (  sc.GetValue() == "datablock" ||
-                     sc.GetValue() == "function" ) ) 
+                  (  sc.GetValue() == L"datablock" ||
+                     sc.GetValue() == L"function" ) ) 
                goto SKIP_STEP;
          }
  

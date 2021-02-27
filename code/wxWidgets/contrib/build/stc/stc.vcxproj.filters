@@ -371,6 +371,9 @@
     <ClInclude Include="..\..\src\stc\scintilla\src\XPM.h">
       <Filter>Source Files\scintilla</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\stc\helper.h">
+      <Filter>Source Files\scintilla</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\msw\version.rc">

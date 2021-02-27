@@ -142,8 +142,8 @@ void ScrollMapCtrl::SetRange( int range )
 void ScrollMapCtrl::AddItem( int line, const wxColor& color, const wxString& tip )
 {
    wxString fixedTip = tip;
-   fixedTip.Replace( "\r\n", "\n", true );
-   fixedTip.Replace( "\t", "   ", true );
+   fixedTip.Replace( L"\r\n", L"\n", true );
+   fixedTip.Replace( L"\t", L"   ", true );
 
    for ( int i=0; i < m_Items.size(); i++ )
    {

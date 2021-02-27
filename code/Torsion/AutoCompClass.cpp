@@ -8,6 +8,7 @@
 #include "AutoComp.h"
 #include "AutoCompExports.h"
 
+#include "helper.h"
 
 #ifdef _DEBUG 
    #define new DEBUG_NEW 
@@ -174,7 +175,7 @@ bool AutoCompClass::GetCallTip( const wxString& name, CallTipInfo& tip ) const
    if ( var ) 
    {
       wxString decl;
-      decl << m_Name << "::" << var->m_Name;
+      decl << m_Name << L"::" << var->m_Name;
 
       tip.SetTip( decl, var->m_Desc );
 
@@ -185,12 +186,12 @@ bool AutoCompClass::GetCallTip( const wxString& name, CallTipInfo& tip ) const
    if ( func ) 
    {
       wxString decl;
-      decl << "function " << m_Name << "::" << func->GetMethodName();
+      decl << L"function " << m_Name << L"::" << func->GetMethodName();
 
       if ( !func->GetArgs().IsEmpty() )
-         decl << "( " << func->GetArgs() << " )";
+         decl << L"( " << func->GetArgs() << L" )";
       else
-         decl << "()";
+         decl << L"()";
 
       wxString desc = func->GetDesc();
 
@@ -200,7 +201,7 @@ bool AutoCompClass::GetCallTip( const wxString& name, CallTipInfo& tip ) const
       // send all definitions!
       int count = func->GetDupeCount();
       if ( count > 0 )
-         desc << "\n" << count << " other definition(s)...";
+         desc << L"\n" << count << L" other definition(s)...";
 
       tip.SetTip( decl, desc );
 
@@ -416,8 +417,8 @@ void AutoCompClass::SetDatablocks( AutoCompClassArray* classes )
       AutoCompClass* class_ = (*classes)[i];
       wxASSERT( class_ );
 
-      if (  class_->GetName().CmpNoCase( "SimDataBlock" ) == 0 ||
-            class_->GetBase().CmpNoCase( "SimDataBlock" ) == 0 )
+      if (  class_->GetName().CmpNoCase( L"SimDataBlock" ) == 0 ||
+            class_->GetBase().CmpNoCase( L"SimDataBlock" ) == 0 )
       {
          datablocks.Add( class_->GetName() );
          class_->SetDatablock( true );
@@ -494,7 +495,7 @@ bool AutoCompClass::GetFileAndLine( wxArrayString* files, wxArrayInt* lines, wxA
    if ( symbols )
    {
       for ( int i=first; i < symbols->GetCount(); i++ )
-         (*symbols)[i] = m_Name + "::" + (*symbols)[i];
+         (*symbols)[i] = m_Name + L"::" + (*symbols)[i];
    }
 
    for ( int i=0; i < m_Dupes.Count(); i++ )
@@ -519,7 +520,7 @@ bool AutoCompClass::GetFileAndLine( wxArrayString* files, wxArrayInt* lines, wxA
 int AutoCompClass::BuildFieldList( wxArrayString& list ) const
 {
    for ( int i=0; i < m_Vars.GetCount(); i++ ) 
-      list.Add( m_Vars[i]->m_Name + AutoCompData::IDENT_VAR );
+	   list.Add( m_Vars[i]->m_Name + AutoCompData::IDENT_VAR );
 
    return m_Vars.GetCount();
 }

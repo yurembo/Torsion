@@ -289,7 +289,7 @@ void ExternalToolsDlg::OnAddClick( wxCommandEvent& event )
 
    wxASSERT( m_ToolList );
    ToolCommand cmd;
-   cmd.SetTitle( "&New Tool" );
+   cmd.SetTitle( L"&New Tool" );
    m_ToolCmds.Add( cmd );
    int sel = m_ToolList->Append( cmd.GetTitle() );
    m_ToolList->SetSelection( sel );
@@ -441,10 +441,10 @@ void ExternalToolsDlg::OnToolSelected( wxCommandEvent& event )
    // disabled and empty the controls.
    if ( sel == wxNOT_FOUND )
    {
-      m_TitleCtrl->SetLabel( "" );
-      m_CmdCtrl->SetLabel( "" );
-      m_ArgCtrl->SetLabel( "" );
-      m_DirCtrl->SetLabel( "" );
+      m_TitleCtrl->SetLabel( L"" );
+      m_CmdCtrl->SetLabel( L"" );
+      m_ArgCtrl->SetLabel( L"" );
+      m_DirCtrl->SetLabel( L"" );
 
       m_TitleCtrl->Enable( false );
       m_CmdCtrl->Enable( false );
@@ -495,7 +495,7 @@ void ExternalToolsDlg::OnCmdMenuClick( wxCommandEvent& event )
    // Setup the menu.
    tsMenu* menu = new tsMenu;
    menu->Append( ToolCommand::VAR_CONFIG_EXE, ToolCommand::GetVarName( ToolCommand::VAR_CONFIG_EXE ) );
-   menu->Append( ToolCommand::VAR_MAX, "Browse..." );
+   menu->Append( ToolCommand::VAR_MAX, L"Browse..." );
 
    // Show it!
    int result = tsTrackPopupMenu( menu, true, button->GetPosition(), this );
@@ -513,9 +513,9 @@ void ExternalToolsDlg::OnCmdMenuClick( wxCommandEvent& event )
       wxASSERT( m_CmdCtrl );
       wxString cmd = m_CmdCtrl->GetLabel();
    
-      wxString path = wxFileSelector( "Choose a command executable", 
+      wxString path = wxFileSelector( L"Choose a command executable", 
          cmd, wxEmptyString, wxEmptyString, 
-         "All Executables (*.exe;*.com;*.pif;*.bat;*.cmd)|*.exe;*.com;*.pif;*.bat;*.cmd|All Files (*.*)|*.*",
+         L"All Executables (*.exe;*.com;*.pif;*.bat;*.cmd)|*.exe;*.com;*.pif;*.bat;*.cmd|All Files (*.*)|*.*",
          wxOPEN | wxFILE_MUST_EXIST, this );
       
       if ( path.IsEmpty() )
