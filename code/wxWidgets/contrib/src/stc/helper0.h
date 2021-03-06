@@ -4,9 +4,10 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-using namespace std ;
 
-wstring widen( const string& str )
+using namespace std;
+
+static wstring widen( const string& str )
 {
     wostringstream wstm ;
     const ctype<wchar_t>& ctfacet = use_facet<ctype<wchar_t>>(wstm.getloc()) ;
@@ -15,7 +16,7 @@ wstring widen( const string& str )
     return wstm.str() ;
 }
 
-string narrow( const wstring& str )
+static string narrow( const wstring& str )
 {
     ostringstream stm ;
 

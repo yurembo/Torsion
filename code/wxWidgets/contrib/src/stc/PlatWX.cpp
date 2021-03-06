@@ -19,7 +19,7 @@
 #include "wx/stc/stc.h"
 
 
-#include "helper.h"
+#include "helper0.h"
 
 
 Point Point::FromLong(long lpoint) {

@@ -371,7 +371,7 @@
     <ClInclude Include="..\..\src\stc\scintilla\src\XPM.h">
       <Filter>Source Files\scintilla</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\stc\helper.h">
+    <ClInclude Include="..\..\src\stc\helper0.h">
       <Filter>Source Files\scintilla</Filter>
     </ClInclude>
   </ItemGroup>

@@ -50,6 +50,7 @@
     <LinkIncremental>false</LinkIncremental>
     <EmbedManifest>true</EmbedManifest>
     <GenerateManifest>false</GenerateManifest>
+    <IncludePath>C:\Users\yurem\GitHub\Torsion\code\wxWidgets\include\wx\propgrid;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -91,9 +92,10 @@
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>comctl32.lib;wxbase26u.lib;wxmsw26u_core.lib;wxmsw26u_adv.lib;wxbase26u_net.lib;wxmsw26_stc.lib;wxregexu.lib;wxjpeg.lib;Ws2_32.lib;Rpcrt4.lib;wxmsw26u_dbgrid.lib;wxexpat.lib;wxmsw26_media.lib;wxmsw26u_gl.lib;wxmsw26u_xrc.lib;wxmsw26u_html.lib;wxmsw26u_qa.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>comctl32.lib;wxbase26u.lib;wxmsw26u_core.lib;wxmsw26u_adv.lib;wxbase26u_net.lib;wxmsw26_stc.lib;wxmsw27u_propgrid.lib;wxregexu.lib;wxjpeg.lib;Ws2_32.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)torsion.exe</OutputFile>
       <AdditionalLibraryDirectories>..\wxWidgets\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -105,11 +107,16 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalOptions>/FORCE:MULTIPLE /TLBID:6 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent>
       <Message>Updating Build Number</Message>
       <Command>UpdateBuildNumber BuildVersion.h ..\..\Installer\Torsion.iss</Command>
     </PreBuildEvent>
+    <Manifest>
+      <AdditionalManifestFiles>%(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AutoComp.h" />
